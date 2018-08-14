@@ -1,0 +1,658 @@
+@startuml architecture
+skinparam componentStyle uml2
+skinparam shadowing false
+skinparam ArrowColor #3d3c5b
+
+skinparam rectangle {
+	BorderColor #8bc541
+	BackgroundColor #8bc541
+	BackgroundColor #ffffff
+}
+
+title Architecture
+header Open Protocol JS
+
+[Stream] as ST
+[OP Parser] as OPP
+[MID Parser] as MP
+[OP Serializer] as OPS
+[MID Serializer] as MS
+
+ST  -up-> OPP
+ST <-down- OPS
+OPP -right-> MP
+OPS <- MS
+
+center footer Smart-Tech Controle e Automação
+@enduml
+
+
+@startuml OP_Parser_Operation
+
+skinparam shadowing false
+skinparam ArrowColor #3d3c5b
+
+skinparam sequence {	
+	LifeLineBorderColor #3d3c5b
+	'LifeLineBackgroundColor #3d3c5b
+	LifeLineBackgroundColor #ffffff
+	ParticipantBorderColor #8bc541
+	'ParticipantBackgroundColor #8bc541
+	ParticipantBackgroundColor #ffffff
+}
+
+title OP Parser - Operation
+header Projeto OpenProtocol
+
+:onData;
+
+if (tenho buffer guardado?) then (sim)
+    :concatena novo buffer com o buffer guardado;
+else (não)   
+
+endif
+
+if (buffer.length < 20) then (sim)
+    :guarda buffer;
+    :return;
+    stop
+
+else (não)
+    if (mensagem completa?) then (sim)
+    
+        if (mensagem valida?) then (sim)
+            :parsear header;
+            :emitir "data";
+            stop
+
+            else (não)
+            :gerar erro;
+            end
+            endif
+
+else (não)
+    :aguardar novos pacotes;
+    stop
+endif
+
+center footer Smart-Tech Controle e Automação
+@enduml
+
+@startuml MID_Parser_Operation
+
+skinparam shadowing false
+skinparam ArrowColor #3d3c5b
+
+skinparam sequence {	
+	LifeLineBorderColor #3d3c5b
+	'LifeLineBackgroundColor #3d3c5b
+	LifeLineBackgroundColor #ffffff
+	ParticipantBorderColor #8bc541
+	'ParticipantBackgroundColor #8bc541
+	ParticipantBackgroundColor #ffffff
+}
+
+title MID Parser - Operation
+header Projeto OpenProtocol
+
+:onData;
+
+if (verifica se tem implementação?) then (sim)
+    :realiaza o parse do MID;
+    
+    if (erro ao parsear?) then (sim)
+        :emitir "erro";
+        end
+    else (não)
+    endif
+
+else (não)   
+
+    if (payload é buffer?) then (sim)
+        :converte payload para string;
+    else (não)
+        :emitir "erro";
+        end
+    endif
+
+endif
+
+:emitir "data";
+stop
+
+center footer Smart-Tech Controle e Automação
+@enduml
+
+@startuml MID_Serializer_Operation
+
+skinparam shadowing false
+skinparam ArrowColor #3d3c5b
+
+skinparam sequence {	
+	LifeLineBorderColor #3d3c5b
+	'LifeLineBackgroundColor #3d3c5b
+	LifeLineBackgroundColor #ffffff
+	ParticipantBorderColor #8bc541
+	'ParticipantBackgroundColor #8bc541
+	ParticipantBackgroundColor #ffffff
+}
+
+title MID Serializer - Operation
+header Projeto OpenProtocol
+
+:onData;
+
+if (verifica se tem implementação?) then (sim)
+    :realiaza a serialização do MID;
+    
+    if (erro ao serializar?) then (sim)
+        :emitir "erro";
+        end
+    else (não)
+    endif
+
+else (não)   
+
+    if (payload é buffer ou string?) then (sim)
+        :converte payload para buffer;
+    else (não)
+        :emitir "erro";
+        end
+    endif
+
+endif
+
+:emitir "data";
+stop
+
+center footer Smart-Tech Controle e Automação
+@enduml
+
+@startuml OP_Serializer_Operation
+
+skinparam shadowing false
+skinparam ArrowColor #3d3c5b
+
+skinparam sequence {	
+	LifeLineBorderColor #3d3c5b
+	'LifeLineBackgroundColor #3d3c5b
+	LifeLineBackgroundColor #ffffff
+	ParticipantBorderColor #8bc541
+	'ParticipantBackgroundColor #8bc541
+	ParticipantBackgroundColor #ffffff
+}
+
+title OP Serializer - Operation
+header Projeto OpenProtocol
+
+:onData;
+
+if (parametros corretos?) then (sim)
+    :realiaza a serialização do header;
+   
+else (não)   
+    :emitir "erro";
+    end
+endif
+
+:emitir "data";
+stop
+
+center footer Smart-Tech Controle e Automação
+@enduml
+
+@startuml LinkLayer
+
+skinparam shadowing false
+skinparam ArrowColor #3d3c5b
+
+skinparam sequence {	
+	LifeLineBorderColor #3d3c5b
+	'LifeLineBackgroundColor #3d3c5b
+	LifeLineBackgroundColor #ffffff
+	ParticipantBorderColor #8bc541
+	'ParticipantBackgroundColor #8bc541
+	ParticipantBackgroundColor #ffffff
+}
+
+title LinkLayer - Receiver Message - Operation
+header Project OpenProtocol
+
+#LightBlue:stream;
+
+partition onDataStream {
+    #LightBlue:_onDataStream();
+
+    if (rawData is true) then (yes)
+        :dataRaw = Buffer Message;
+    endif
+    #LightBlue:opParser.write();
+}
+
+detach
+
+partition onDataOpParser {
+    #LightBlue:_onDataOpParser();
+
+    if (linkLayerActive is true) then (yes)
+    
+        if(check duplicate message) then (yes)
+            :duplicateMsg = true;
+            :sequenceNumberPartner -1;
+        endif
+
+    endif
+
+    if (is multi message) then (yes)
+        
+        :receiverMessageInParts = data.messageParts;
+
+        if (data.messageNumber != numberMessageReceived) then (yes)
+            if (linkLayerActive is true) then (yes)
+                #LightGreen:send NOK - MID 9998;
+            endif
+
+            #Orange:emit "error";
+            end
+
+        endif
+
+        :partsOfMessage.push(data.payload);
+
+        if (receiverMessageInParts == numberMessageReceived) then (yes)
+            :data.payload = Buffer.concat(partsOfMessage);
+            :receiverMessageInParts = 0;
+            :numberMessageReceived = 1;
+            :lastMessageReceived = data;
+
+            if (!duplicateMessage) then (yes)
+                
+                if (disableMidParsing) then (true)
+                    
+                    #LightBlue:do callback();
+
+                    if (rawData) then (true)
+                        :data._raw = Buffer(dataRaw);                    
+                    endif
+
+                    #LightBlue:emit "data";
+
+                else (false)
+
+                    #LightBlue:midParser.write();
+
+                endif
+
+            endif
+
+            stop
+
+        endif
+
+        :numberMessageReceived += 1;
+        stop
+
+    endif
+        
+    if (linkLayerActive is true) then (yes)
+        if (data.sequenceNumber != 0) then (yes)
+            if (MID 9997 or 9998) then (yes)
+                if(senquenceNumber is correct) then (yes)
+                else (no)
+                    #Orange:emit "error";
+                    end
+                endif
+
+            else (no)
+
+                if (sequenceNumberPartner is true) then (yes)
+                    if (sequenceNumberPartner == 99) then (yes)
+                        :sequenceNumberPartner = 1;
+                    endif
+
+                    if (data.sequenceNumber != (sequenceNumberPartner + 1)) then (yes)
+                        #LightGreen:send NOK - MID 9998;
+                        #Orange:emit "error";
+                        end
+                    endif
+                endif
+
+                :sequenceNumberPartner = data.senquenceNumber;
+                #LightGreen:send OK - MID 9997;
+
+            endif
+        endif
+    endif
+
+    :lastMessageReceived = data;
+
+    if (duplicateMsg) then (false)
+        if(disableMidParsing) then (true)
+
+            #LightBlue:do callback();
+
+            if (rawData) then (true)
+                :data._raw = Buffer dataRaw;
+            endif 
+
+            #LightBlue:emit "data";
+            stop       
+
+        else (false)
+            #LightBlue:midParser.write();
+            detach
+        endif
+
+    else
+    end
+    endif
+}
+
+partition onDataMidParser {    
+    #LightBlue:_onDataMidParser();
+
+    if (linkLayerActive is true) then (yes)
+        if (MID 9997 or 9998) then (yes)
+            #LightBlue:_receiverLinkLayer();
+            
+            :clearTimeout();
+            
+            if (MID 9998 || ACK midNumber != MID Send || ACK sequenceNumeber != sequenceNumber ) then (yes)
+                if (callback) then (yes)
+                    #Orange:do callback(Error);
+                    end
+                else (no)
+                    #Orange:emit "error";
+                    end
+                endif
+            endif
+
+            :message = {};
+            #LightBlue:do callback();
+            end       
+ 
+        endif
+    endif
+
+    #LightBlue:emit "data";
+}
+
+center footer Smart-Tech Controle e Automação
+@enduml
+
+
+@startuml LinkLayer_Send Message
+
+skinparam shadowing false
+skinparam ArrowColor #3d3c5b
+
+skinparam sequence {	
+	LifeLineBorderColor #3d3c5b
+	'LifeLineBackgroundColor #3d3c5b
+	LifeLineBackgroundColor #ffffff
+	ParticipantBorderColor #8bc541
+	'ParticipantBackgroundColor #8bc541
+	ParticipantBackgroundColor #ffffff
+}
+
+title LinkLayer - Send Message - Operation
+header Project OpenProtocol
+
+partition _write() {
+    #LightBlue:_write(msg, encoder, callback);
+
+    :this.callbackWrite = callback;
+    :resentTimes = 0;
+
+    if (linkLayerActive) then (true)
+        :msg.sequenceNumber = this.sequenceNumber;
+        :this.sequenceNumber += 1;
+
+        if (this.sequenceNumber > 99) then (true)
+            :this.sequenceNumber = 1;
+        endif
+    endif
+
+    :this.midSerializer.write(msg);
+    stop
+}
+
+partition _onDataMidSerializer(){ 
+    #LightBlue:_write(data);
+
+    if (this.linkLayerActive) then (true)
+        if (data.mid != 9998 && data.mid != 9997) then (true)
+            :this.timer = setTimeout(this._resendMid);
+        endif
+    endif
+
+    :this.messageParts = 0;
+    :length = data.payload.length;
+
+    partition MultiParts {
+
+        if (length > 9979) then (true)
+            :msgPart = 1;
+            :parts = length / 9979;
+            :parts = Math.ceil(parts);
+            :data.messageParts = parts;
+            :this.messageParts = parts;
+
+            if (parts > 9) then (true)
+                #Orange:emit "error";
+                end
+            endif
+
+            :fullPayload = data.payload;
+
+            while (fullPayload.length) is (> 0)
+
+                if (fullPayload.length > 9979) then (true)
+
+                    :data.payload = fullPayload.slice(0, 9979);
+                    :fullPayload = fullPayload.slice(9979);
+
+                else (false)
+
+                    :data.payload = fullPayload;
+                    :fullPayload = Buffer.from("");
+
+                endif
+
+                :data.messageNumber = msgPart;
+                :msgPart += 1;
+
+                :this.message = data;
+                #LightBlue:this.opSerializer.write(data);
+
+            endwhile
+
+        endif
+
+        end
+    }
+
+    :this.message = data;
+    #LightBlue:this.opSerializer.write(data);
+
+    end
+}
+
+partition _onDataOpSerializer() {
+    #LightBlue:_write(data);
+
+    #LightBlue:this.stream.write(data, callback);
+
+    partition callback_stream_write {
+        if (!this.linkLayerActive) then (true)
+            if (this.callbackWrite) then (true)
+                :process.nextTick(this.callbackWrite);
+                :this.callbackWrite = undefined;
+            endif
+        endif
+
+        end
+    }
+}
+
+center footer Smart-Tech Controle e Automação
+@enduml
+
+@startuml Flow_Send_Data_Not_LinkLayer
+
+title Flow Send Data Not LinkLayer
+header Project OpenProtocol
+
+participant Client as CL
+participant SessionControl as SC
+participant LinkLayer as LL
+participant Stream as ST
+participant Controller as CT
+
+CL  -> CT : Created Stream
+CT  -> CL : Created Stream
+
+|||
+
+activate ST
+
+CL  -> SC : Send Stream
+SC  -> LL : Send Stream
+
+CL  -> SC : << Send MID 0001 >>
+SC  -> LL : MID 0001
+
+activate LL
+
+LL  -> LL : MID Serializere
+LL  -> LL : OP Serializer
+LL  -> ST : Send MID Serialized
+ST  -> CT : MID Serialized
+ST --> LL : Callback Stream
+LL  -> LL : << Free for new messages >>
+
+
+center footer Smart-Tech Controle e Automação
+@enduml
+
+
+@startuml Flow_Send_Data_LinkLayer
+
+title Flow Send Data LinkLayer
+header Project OpenProtocol
+
+participant Client as CL
+participant SessionControl as SC
+participant LinkLayer as LL
+participant Stream as ST
+participant Controller as CT
+
+CL  -> CT : Created Stream
+CT  -> CL : Created Stream
+
+|||
+
+activate ST
+
+CL  -> SC : Send Stream
+SC  -> LL : Send Stream
+
+CL  -> SC : << Send MID 0001 >>
+SC  -> LL : MID 0001
+
+activate LL
+
+LL  -> LL : MID Serializere
+LL  -> LL : OP Serializer
+LL  -> ST : Send MID Serialized
+ST  -> CT : MID Serialized
+CT  -> ST : ACK LinkLayer
+ST  -> LL : ACK LinkLayer
+LL  -> LL : << Free for new messages >>
+
+
+center footer Smart-Tech Controle e Automação
+@enduml
+
+@startuml Flow_Receiver_Data_LinkLayer
+
+title Flow Operation LinkLayer - Ex.: Family LastTightening 
+header Project OpenProtocol
+
+participant Client as cl
+participant SessionControl as sc
+participant LinkLayer as ll
+participant Controller as ct
+
+...initialization completed...
+
+group Subscribe
+    cl  -> sc : << Subscribe LastTightening >>
+    activate sc
+    sc  -> ll : MID 0060 << Object >>
+    activate ll
+    ll  -> ll : Serializer Payload
+    ll  -> ll : Serializer Header
+    ll  -> ct : MID 0060 << Buffer >>
+    ct --> ll : ACK LL MID 9997 << Buffer >>
+    deactivate ll
+    ct  -> ll : MID ACK 0004 / 0005 << Buffer >>
+    activate ll
+    ll  -> ll : Parser Header MID ACK
+    ll  -> ll : Parser Payload MID ACK
+    ll  -> sc : MID ACK << Object >>
+    deactivate ll
+    sc  -> cl : MID ACK << Object >>
+    deactivate sc
+end
+
+...
+
+group Received Data
+
+    ct  -> ll : MID 0061 << Buffer >>
+    activate ll
+    ll  -> ll : Validate MID
+    ll --> ct : ACK LL MID 9997 / 9998 << Buffer >>
+    ll  -> ll : Parser Header MID 0061
+    ll  -> ll : Parser Payload MID 0061
+    ll  -> ll : emit LL.Data << Object >>
+    deactivate ll
+
+    
+    sc  -> sc : listened LL.Data  << Object >>
+    activate sc
+    sc  -> sc : emit SC.Data << Object >> 
+    sc  -> sc : Check group
+    sc  -> sc : emit SC.LastTightening << Object >>
+    deactivate sc
+
+    cl  -> cl : listened SC.LastTightening << Object >>
+
+end
+
+...
+
+group Unsubscribe
+    cl  -> sc : << Unsubscribe LastTightening >>
+    activate sc
+    sc  -> ll : MID 0063 << Object >>
+    activate ll
+    ll  -> ll : Serializer Payload
+    ll  -> ll : Serializer Header
+    ll  -> ct : MID 0063 << Buffer >>
+    ct --> ll : ACK LL MID 9997 << Buffer >>
+    deactivate ll
+    ct  -> ll : MID ACK 0004 / 0005 << Buffer >>
+    activate ll
+    ll  -> ll : Parser Header MID ACK
+    ll  -> ll : Parser Payload MID ACK
+    ll  -> sc : MID ACK << Object >>
+    deactivate ll
+    sc  -> cl : MID ACK << Object >>
+    deactivate sc
+end
+
+...
+center footer Smart-Tech Controle e Automação
+@enduml

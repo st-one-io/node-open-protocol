@@ -1,0 +1,31 @@
+{
+  "name": "node-open-protocol",
+  "version": "1.0.0",
+  "description": "Node of Open Protocol",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "test": "nyc --reporter=html --reporter=text --reporter=text-summary mocha --timeout=3000 test/**/**.spec.js",
+    "doc": "jsdoc -d docs/jsdoc/ -r -R README.md src/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/netsmarttech/node-open-protocol"
+  },
+  "keywords": [
+    "atlas-copco",
+    "open-protocol",
+    "communication",
+    "controller"
+  ],
+  "author": "SmartTech",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
+    "nyc": "^11.8.0",
+    "jsdoc": "^3.5.5"
+  }
+}

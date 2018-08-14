@@ -1,0 +1,20 @@
+{
+    "11": "psetID",
+    "13": "psetData",
+    "2601": "modeIdUpload",
+    "2603": "modeDataUpload",
+    "31": "jobIdUpload",
+    "33": "jobDataUpload",
+    "41": "toolDataUpload",
+    "65": "oldTighteningResultUpload",
+    "81": "readTimeUpload",
+    "215": "ioDeviceStatus",
+    "301": "histogramUpload",
+    "411": "autoDisableSettings",
+    "262": "toolTagID",
+    "242": "userDataDownload",
+    "125": "jobLineControlAlert1",
+    "108": "lastPowerMACSTighteningResultBoltData",
+    "48": "toolPairingHandling",
+    "9999": "keepAlive"
+}
