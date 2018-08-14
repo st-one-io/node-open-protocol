@@ -4,7 +4,7 @@ This node is an implementation of the Atlas Copco's Open Protocol.
  
 This node was created by [Smart-Tech](https://netsmarttech.com) as part of the [ST-One](https://netsmarttech.com/page/st-one) project.
 
-Documentation: [Open Protocol R 2.8.0](docs/OpenProtocol_Specification_R_2_8_0_9836 4415.pdf)
+Documentation: [Open Protocol R 2.8.0](docs/OpenProtocolSpecification_R280.pdf)
 
 ## What is Open Protocol?
 
