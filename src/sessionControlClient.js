@@ -75,26 +75,26 @@ class SessionControlClient extends EventEmitter {
      * @property {Object} data All MID's received of the controller
      */
 
-    /** 
+    /**
      * @event SessionControlClient#dataGroup
      * @property {Object} data data of subscribe
-     * 
+     *
      * @example
-     * 
+     *
      * //Subscribe lastTightening
      * sessionControlClient.subscribe("lastTightening");
-     * 
+     *
      * sessionControlClient.on("lastTightening", (data) => {
      *  console.log("Received MID 0061 / data of subscribed [lastTightening]", data);
      * });
-     * 
+     *
      * //Subscribe vin vehicleIdNumber
      * sessionControlClient.subscribe("vin");
-     * 
+     *
      * sessionControlClient.on("vin", (data) => {
      *  console.log("Received MID 0052 / data of subscribed [vin]", data);
      * });
-     * 
+     *
      */
 
     /**
@@ -112,28 +112,28 @@ class SessionControlClient extends EventEmitter {
      * @param {*}       opts
      * @param {object}  [opts.defaultRevisions = {}]
      * @param {boolean} [opts.linkLayerActivate] true = activate LinkLayer / false = not activate LinkLayer / undefined = autoNegotiation LinkLayer
-     * @param {boolean} [opts.genericMode]  true activate / false or undefined not activate 
-     * @param {number}  [opts.keepAlive = 10000] 
-     * 
+     * @param {boolean} [opts.genericMode]  true activate / false or undefined not activate
+     * @param {number}  [opts.keepAlive = 10000]
+     *
      * @param {stream}  opts.stream
      * @param {boolean} [opts.rawData]
      * @param {object}  [opts.disableMidParsing = {}]
      * @param {number}  [opts.timeOut = 3000]
      * @param {number}  [opts.retryTimes = 3]
-     * 
+     *
      * @example
      * // Instantiate SessionControlClient with default values
      * *
      * const OP = require("open-protocol");
-     *  
+     *
      * // Create a socket
      * const net = require("net");
      * let socket = net.createConnection(port, host);
-     * 
+     *
      * let opts = {
      *  stream: socket
      * }
-     * 
+     *
      * let sessionControlClient = new OP.SessionControlClient(opts);
      *
      * // Add a listener for the connect event
@@ -144,23 +144,23 @@ class SessionControlClient extends EventEmitter {
      *
      * // Perform protocol connection
      * sessionControlClient.connect();
-     * 
+     *
      * @example
      *
      * // The SessionControlClient can also be instantiated in the library base,
      * // in this case, the library performs the connection and return a SessionControlClient ready.
-     * 
+     *
      * const OP = require("open-protocol");
-     * 
+     *
      * let ipController = "127.0.0.1";
      * let portController = 4545;
      * let optsSessionControl = {};
-     * 
+     *
      * let sessionControlClient = OP.createClient(portController, ipController, optsSessionControl, (data) => {
      *  console.log("Connected");
      *  console.log("MID of reply", data);
      * });
-     * 
+     *
      */
     constructor(opts) {
 
@@ -206,6 +206,7 @@ class SessionControlClient extends EventEmitter {
         this.controllerData = null;
 
         this.keepAliveTimer = undefined;
+        this.receiverKeepAliveTimer = undefined;
 
         this.onClose = false;
 
@@ -240,7 +241,7 @@ class SessionControlClient extends EventEmitter {
     /**
      * @description This method makes a connection with the controller.
      * If add a callback function, it will add as listener of connect @event.
-     * 
+     *
      * @param {function} cb function of callback
      */
     connect(cb) {
@@ -248,7 +249,7 @@ class SessionControlClient extends EventEmitter {
         let midSend = {};
 
         if (this.connected) {
-            if(typeof cb === 'function') {
+            if (typeof cb === 'function') {
                 return process.nextTick(cb, this.controllerData);
             } else {
                 return new Promise(function (resolve) {
@@ -340,12 +341,13 @@ class SessionControlClient extends EventEmitter {
 
                 this.statusConnection = CONN_CONNECTED;
                 this.controllerData = data;
-                
+
                 process.nextTick(() => this.emit("connect", data));
-                
+
                 this.ll.on("data", (data) => this._onDataLinkLayer(data));
                 this.ll.on("error", (err) => this._onErrorLinkLayer(err));
                 this.ll.on("errorSerializer", (err) => this._onErrorSerializer(err));
+                this.ll.on("errorParser", (err) => this._onErrorParser(err));
 
                 if (this.useLinkLayer === undefined) {
                     if (data.payload.sequenceNumberSupport === 1) {
@@ -370,6 +372,8 @@ class SessionControlClient extends EventEmitter {
                 }
 
                 clearTimeout(this.keepAliveTimer);
+                clearTimeout(this.receiverKeepAliveTimer);
+
                 this.keepAliveTimer = setTimeout(() => this._sendKeepAlive(), this.keepAlive);
 
                 this.onClose = false;
@@ -382,7 +386,7 @@ class SessionControlClient extends EventEmitter {
 
         this.ll.on("data", (data) => receivedReply(data));
 
-        if(typeof cb === 'function'){
+        if (typeof cb === 'function') {
             return this.once('connect', cb);
         } else {
             return new Promise((resolve, reject) => {
@@ -398,11 +402,12 @@ class SessionControlClient extends EventEmitter {
 
     /**
      * @description This method destroys the connection and cleans all states of SessionControlClient.
-     * @param {Error} [err] 
+     * @param {Error} [err]
      */
     close(err) {
 
         clearTimeout(this.keepAliveTimer);
+        clearTimeout(this.receiverKeepAliveTimer);
 
         this.onClose = true;
         this.statusConnection = CONN_NOT_CONNECT;
@@ -436,14 +441,14 @@ class SessionControlClient extends EventEmitter {
      *  // In this case the client does not receives a feedback and the sent message go with midNumber and default body.
      *
      * sessionControlClient.sendMid(1);
-     * 
+     *
      * //result
      * {
      *  mid: 1,
      *  revision: 1,
      *  payload: ""
      * }
-     * 
+     *
      * @example
      *
      *  // Example of a call, adding [midNumber] and body values with [opts].
@@ -454,22 +459,22 @@ class SessionControlClient extends EventEmitter {
      *   revision: 4,
      *   payload: "Test"
      * }
-     * 
+     *
      * sessionControlClient.sendMid(1, opts);
-     * 
+     *
      * //result
      * {
      *  mid: 1,
      *  revision: 4,
      *  payload: "Test"
      * }
-     * 
+     *
      * @example
      *
      * // Example of a complete call, adding [midNumber], body values with [opts] and a callback function.
      * // In this case the client, receives a feedback with status of the call and the is sent message will have midNumber, body
      * // values of opts and others fields with default values.
-     * 
+     *
      * let opts = {
      *   revision: 4,
      *   payload: "Test"
@@ -487,17 +492,17 @@ class SessionControlClient extends EventEmitter {
      *  }
      *
      * });
-     * 
+     *
      * //result
      * {
      *  mid: 1,
      *  revision: 4,
      *  payload: "Test"
      * }
-     * 
-     * @param {Number} midNumber 
-     * @param {Object} [opts] 
-     * @param {Function} [cb] 
+     *
+     * @param {Number} midNumber
+     * @param {Object} [opts]
+     * @param {Function} [cb]
      */
     sendMid(midNumber, opts, cb) {
         return maybePromisify(this, "_sendMid", midNumber, opts, cb);
@@ -505,9 +510,9 @@ class SessionControlClient extends EventEmitter {
 
     /**
      * @private
-     * @param {*} midNumber 
-     * @param {*} opts 
-     * @param {*} cb 
+     * @param {*} midNumber
+     * @param {*} opts
+     * @param {*} cb
      */
     _sendMid(midNumber, opts, cb) {
 
@@ -526,19 +531,19 @@ class SessionControlClient extends EventEmitter {
      * add the [opts] object. The [cb] function is called in cases of an error, sending the error as
      * parameter and in success cases sending the MID of the reply.
      *
-     * @param {String} midGroup 
-     * @param {Object} [opts] 
-     * @param {Function} [cb] 
+     * @param {String} midGroup
+     * @param {Object} [opts]
+     * @param {Function} [cb]
      */
     request(midGroup, opts, cb) {
         return maybePromisify(this, "_request", midGroup, opts, cb);
     }
-    
+
     /**
      * @private
-     * @param {*} midGroup 
-     * @param {*} opts 
-     * @param {*} cb 
+     * @param {*} midGroup
+     * @param {*} opts
+     * @param {*} cb
      */
     _request(midGroup, opts, cb) {
 
@@ -585,9 +590,9 @@ class SessionControlClient extends EventEmitter {
      * add the [opts] object. The [cb] function is called in case of an error, sending the error as
      * parameter and in success cases sending the MID of reply.
      *
-     * @param {String} midGroup 
-     * @param {Object} [opts] 
-     * @param {Function} [cb] 
+     * @param {String} midGroup
+     * @param {Object} [opts]
+     * @param {Function} [cb]
      */
     command(midGroup, opts, cb) {
         return maybePromisify(this, "_command", midGroup, opts, cb);
@@ -595,9 +600,9 @@ class SessionControlClient extends EventEmitter {
 
     /**
      * @private
-     * @param {*} midGroup 
-     * @param {*} opts 
-     * @param {*} cb 
+     * @param {*} midGroup
+     * @param {*} opts
+     * @param {*} cb
      */
     _command(midGroup, opts, cb) {
 
@@ -631,17 +636,17 @@ class SessionControlClient extends EventEmitter {
      * @example
      * //Subscribe lastTightening
      * sessionControlClient.subscribe("lastTightening");
-     * 
+     *
      * //Listening lastTightening
      * sessionControlClient.on("lastTightening", (data) => {
      *  console.log("Receive MID 0061 / Data of subscribe lastTightening", data);
      * });
-     * 
+     *
      * @fires SessionControlClient#dataGroup
-     * 
-     * @param {String} midGroup 
-     * @param {Object} [opts] 
-     * @param {Function} [cb] 
+     *
+     * @param {String} midGroup
+     * @param {Object} [opts]
+     * @param {Function} [cb]
      */
     subscribe(midGroup, opts, cb) {
         return maybePromisify(this, "_subscribe", midGroup, opts, cb);
@@ -649,9 +654,9 @@ class SessionControlClient extends EventEmitter {
 
     /**
      * @private
-     * @param {*} midGroup 
-     * @param {*} opts 
-     * @param {*} cb 
+     * @param {*} midGroup
+     * @param {*} opts
+     * @param {*} cb
      */
     _subscribe(midGroup, opts, cb) {
 
@@ -696,10 +701,10 @@ class SessionControlClient extends EventEmitter {
      * If adding only [midGroup] the message will have a default body, for additional body settings,
      * add the [opts] object. The [cb] function is called in case of the error, sending the error as
      * parameter and in success cases sending the MID of reply.
-     * 
-     * @param {String} midGroup 
-     * @param {Object} [opts] 
-     * @param {Function} [cb] 
+     *
+     * @param {String} midGroup
+     * @param {Object} [opts]
+     * @param {Function} [cb]
      */
     unsubscribe(midGroup, opts, cb) {
         return maybePromisify(this, "_unsubscribe", midGroup, opts, cb);
@@ -707,9 +712,9 @@ class SessionControlClient extends EventEmitter {
 
     /**
      * @private
-     * @param {*} midGroup 
-     * @param {*} opts 
-     * @param {*} cb 
+     * @param {*} midGroup
+     * @param {*} opts
+     * @param {*} cb
      */
     _unsubscribe(midGroup, opts, cb) {
 
@@ -724,7 +729,8 @@ class SessionControlClient extends EventEmitter {
                 cb = opts;
                 opts = {};
             } else {
-                cb = () => {};
+                cb = () => {
+                };
             }
         }
 
@@ -762,7 +768,7 @@ class SessionControlClient extends EventEmitter {
      * @private
      */
     _sendingProcess() {
-        
+
         if (this.onClose) {
             if (this.midQueue.length > 0) {
                 let e = new Error("unavailable service");
@@ -813,6 +819,8 @@ class SessionControlClient extends EventEmitter {
         }
 
         clearTimeout(this.keepAliveTimer);
+        clearTimeout(this.receiverKeepAliveTimer);
+
         this.keepAliveTimer = setTimeout(() => this._sendKeepAlive(), this.keepAlive);
 
         this.ll.write(this.midInProcess.mid);
@@ -820,10 +828,10 @@ class SessionControlClient extends EventEmitter {
 
     /**
      * @private
-     * @param {*} mid 
-     * @param {*} type 
-     * @param {*} group 
-     * @param {*} local 
+     * @param {*} mid
+     * @param {*} type
+     * @param {*} group
+     * @param {*} local
      */
     _calcRevision(mid, type, group, local) {
 
@@ -929,15 +937,43 @@ class SessionControlClient extends EventEmitter {
      * @private
      */
     _sendKeepAlive() {
+
+        console.log("Chamou - keepAlive");
+
         clearTimeout(this.keepAliveTimer);
         this.keepAliveTimer = setTimeout(() => this._sendKeepAlive(), this.keepAlive);
-        this.request("keepAlive");
+
+        // clearTimeout(this.receiverKeepAliveTimer);
+
+        if (!this.receiverKeepAliveTimer || this.receiverKeepAliveTimer._idleTimeout === -1){
+            console.log("Set Timeout");
+            this.receiverKeepAliveTimer = setTimeout(() => this._failKeepAlive(), this.keepAlive);
+        }
+
+        this.request("keepAlive", (err, data) => {
+
+            clearTimeout(this.receiverKeepAliveTimer);
+
+            console.log("CB keepAlive");
+
+            if (err) {
+                console.log("keepAlive - Error");
+            }
+
+        });
+    }
+
+    _failKeepAlive() {
+        console.log("Fail Keep Alive");
+        clearTimeout(this.receiverKeepAliveTimer);
+        clearTimeout(this.keepAliveTimer);
+        this.close();
     }
 
 
     /**
      * @private
-     * @param {*} data 
+     * @param {*} data
      */
     _onDataLinkLayer(data) {
 
@@ -1034,15 +1070,15 @@ class SessionControlClient extends EventEmitter {
 
     /**
      * @private
-     * @param {*} err 
+     * @param {*} err
      */
     _onErrorLinkLayer(err) {
         this.close(err);
     }
 
     /**
-     * @private 
-     * @param {*} err 
+     * @private
+     * @param {*} err
      */
     _onErrorSerializer(err) {
         this._sendKeepAlive();
@@ -1050,6 +1086,17 @@ class SessionControlClient extends EventEmitter {
         this.inOperation = false;
         this._sendingProcess();
     }
+
+    /**
+     * @private
+     * @param {*} err
+     */
+    _onErrorParser(err) {
+        this.midInProcess.doCallback(err);
+        this.inOperation = false;
+        this._sendingProcess();
+    }
+
 }
 
 class Message {

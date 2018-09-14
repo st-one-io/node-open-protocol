@@ -126,7 +126,9 @@ class LinkLayer extends Duplex {
     }
 
     _onErrorParser(err) {
-        this.emit("error", err);
+        // TODO
+        // this.emit("error", err);
+        this.emit("errorParser", err);
         return;
     }
 

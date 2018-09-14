@@ -60,7 +60,7 @@
  * @param {number} MID0065_2.prevailTorque
  * @param {number} MID0065_2.jobSequenceNumber
  * @param {number} MID0065_2.syncTighteningID
- * @param {number} MID0065_2.toolSerialNumber
+ * @param {string} MID0065_2.toolSerialNumber
  * @param {string} MID0065_2.timeStamp
  * 
  * @param {object} MID0065_3 REV. 3 [(REV. 2) +]
@@ -157,7 +157,7 @@ function parser(msg, opts, cb) {
                 processKey(msg, buffer, "syncTighteningID", 26, 2, position, cb) &&
                 processParser(msg, buffer, "syncTighteningID", "number", 5, position, cb) &&
                 processKey(msg, buffer, "toolSerialNumber", 27, 2, position, cb) &&
-                processParser(msg, buffer, "toolSerialNumber", "number", 14, position, cb) &&
+                processParser(msg, buffer, "toolSerialNumber", "string", 14, position, cb) &&
                 processKey(msg, buffer, "timeStamp", 28, 2, position, cb) &&
                 processParser(msg, buffer, "timeStamp", "string", 19, position, cb) &&
                 processKey(msg, buffer, "torqueValuesUnit", 29, 2, position, cb) &&
@@ -237,7 +237,7 @@ function parser(msg, opts, cb) {
                 processKey(msg, buffer, "syncTighteningID", 26, 2, position, cb) &&
                 processParser(msg, buffer, "syncTighteningID", "number", 5, position, cb) &&
                 processKey(msg, buffer, "toolSerialNumber", 27, 2, position, cb) &&
-                processParser(msg, buffer, "toolSerialNumber", "number", 14, position, cb) &&
+                processParser(msg, buffer, "toolSerialNumber", "string", 14, position, cb) &&
                 processKey(msg, buffer, "timeStamp", 28, 2, position, cb) &&
                 processParser(msg, buffer, "timeStamp", "string", 19, position, cb) &&
                 processKey(msg, buffer, "torqueValuesUnit", 29, 2, position, cb) &&
@@ -313,7 +313,7 @@ function parser(msg, opts, cb) {
                 processKey(msg, buffer, "syncTighteningID", 26, 2, position, cb) &&
                 processParser(msg, buffer, "syncTighteningID", "number", 5, position, cb) &&
                 processKey(msg, buffer, "toolSerialNumber", 27, 2, position, cb) &&
-                processParser(msg, buffer, "toolSerialNumber", "number", 14, position, cb) &&
+                processParser(msg, buffer, "toolSerialNumber", "string", 14, position, cb) &&
                 processKey(msg, buffer, "timeStamp", 28, 2, position, cb) &&
                 processParser(msg, buffer, "timeStamp", "string", 19, position, cb) &&
                 processKey(msg, buffer, "torqueValuesUnit", 29, 2, position, cb) &&
@@ -385,7 +385,7 @@ function parser(msg, opts, cb) {
                 processKey(msg, buffer, "syncTighteningID", 26, 2, position, cb) &&
                 processParser(msg, buffer, "syncTighteningID", "number", 5, position, cb) &&
                 processKey(msg, buffer, "toolSerialNumber", 27, 2, position, cb) &&
-                processParser(msg, buffer, "toolSerialNumber", "number", 14, position, cb) &&
+                processParser(msg, buffer, "toolSerialNumber", "string", 14, position, cb) &&
                 processKey(msg, buffer, "timeStamp", 28, 2, position, cb) &&
                 processParser(msg, buffer, "timeStamp", "string", 19, position, cb) &&
                 processKey(msg, buffer, "torqueValuesUnit", 29, 2, position, cb) &&
@@ -455,7 +455,7 @@ function parser(msg, opts, cb) {
                 processKey(msg, buffer, "syncTighteningID", 26, 2, position, cb) &&
                 processParser(msg, buffer, "syncTighteningID", "number", 5, position, cb) &&
                 processKey(msg, buffer, "toolSerialNumber", 27, 2, position, cb) &&
-                processParser(msg, buffer, "toolSerialNumber", "number", 14, position, cb) &&
+                processParser(msg, buffer, "toolSerialNumber", "string", 14, position, cb) &&
                 processKey(msg, buffer, "timeStamp", 28, 2, position, cb) &&
                 processParser(msg, buffer, "timeStamp", "string", 19, position, cb) &&
                 processKey(msg, buffer, "torqueValuesUnit", 29, 2, position, cb) &&
@@ -519,7 +519,7 @@ function parser(msg, opts, cb) {
                 processKey(msg, buffer, "syncTighteningID", 26, 2, position, cb) &&
                 processParser(msg, buffer, "syncTighteningID", "number", 5, position, cb) &&
                 processKey(msg, buffer, "toolSerialNumber", 27, 2, position, cb) &&
-                processParser(msg, buffer, "toolSerialNumber", "number", 14, position, cb) &&
+                processParser(msg, buffer, "toolSerialNumber", "string", 14, position, cb) &&
                 processKey(msg, buffer, "timeStamp", 28, 2, position, cb) &&
                 processParser(msg, buffer, "timeStamp", "string", 19, position, cb) &&
                 cb(null, msg);
@@ -668,7 +668,7 @@ function serializer(msg, opts, cb) {
             statusprocess =
                 serializerField(msg, buf, "timeStamp", "string", 19, position, cb) &&
                 serializerKey(msg, buf, 28, 2, position, cb) &&
-                serializerField(msg, buf, "toolSerialNumber", "number", 14, position, cb) &&
+                serializerField(msg, buf, "toolSerialNumber", "string", 14, position, cb) &&
                 serializerKey(msg, buf, 27, 2, position, cb) &&
                 serializerField(msg, buf, "syncTighteningID", "number", 5, position, cb) &&
                 serializerKey(msg, buf, 26, 2, position, cb) &&
