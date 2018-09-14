@@ -24,35 +24,49 @@ const MIDSerializer = require("./src/MIDSerializer.js");
 const helpers = require("./src/helpers.js");
 const SessionControlClient = require("./src/sessionControlClient.js");
 
-const midGroups = require ("./src/midGroups.json");
+const midGroups = require("./src/midGroups.json");
 const midCommand = require("./src/midCommand.json");
 const midrequest = require("./src/midRequest.json");
 
 const net = require("net");
 
-function createClient(port, host, opts, connectionListener){
+function createClient(port, host, opts, connectionListener) {
 
     if (connectionListener === undefined) {
         if (typeof opts === "function") {
             connectionListener = opts;
             opts = {};
         } else {
-            connectionListener = () => {};
+            connectionListener = () => {
+            };
         }
     }
-   
+
     opts = opts || {};
 
-    let socket = net.createConnection(port, host, () =>{
+    let socket = net.createConnection(port, host, () => {
+        socket.setTimeout(0);
         client.connect(connectionListener);
     });
+
+    socket.setTimeout(20000);
+
+    socket.once("timeout", () => onTimeout());
+
+    function onTimeout() {
+        let e = new Error("Socket Timeout");
+        e.code = "SOCKET_TIMEOUT";
+        e.address = host;
+        e.port = port;
+        client.emit("error", e);
+    }
 
     opts.stream = socket;
 
     let client = new SessionControlClient(opts);
 
     return client;
-} 
+}
 
 module.exports = {
     constants: {
@@ -60,7 +74,7 @@ module.exports = {
         commands: midCommand,
         requests: midrequest
     },
-    OpenProtocolParser, 
+    OpenProtocolParser,
     OpenProtocalSerializer,
     SessionControlClient,
     MIDParser,

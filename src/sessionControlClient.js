@@ -938,33 +938,19 @@ class SessionControlClient extends EventEmitter {
      */
     _sendKeepAlive() {
 
-        console.log("Chamou - keepAlive");
-
         clearTimeout(this.keepAliveTimer);
         this.keepAliveTimer = setTimeout(() => this._sendKeepAlive(), this.keepAlive);
 
-        // clearTimeout(this.receiverKeepAliveTimer);
-
-        if (!this.receiverKeepAliveTimer || this.receiverKeepAliveTimer._idleTimeout === -1){
-            console.log("Set Timeout");
+        if (!this.receiverKeepAliveTimer || this.receiverKeepAliveTimer._idleTimeout === -1) {
             this.receiverKeepAliveTimer = setTimeout(() => this._failKeepAlive(), this.keepAlive);
         }
 
-        this.request("keepAlive", (err, data) => {
-
+        this.request("keepAlive", (err) => {
             clearTimeout(this.receiverKeepAliveTimer);
-
-            console.log("CB keepAlive");
-
-            if (err) {
-                console.log("keepAlive - Error");
-            }
-
         });
     }
 
     _failKeepAlive() {
-        console.log("Fail Keep Alive");
         clearTimeout(this.receiverKeepAliveTimer);
         clearTimeout(this.keepAliveTimer);
         this.close();
