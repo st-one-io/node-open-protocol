@@ -88,6 +88,9 @@ class LinkLayer extends Duplex {
         //Errors
         this.midSerializer.on("error", (err) => this._onErrorSerializer(err));
         this.opSerializer.on("error", (err) => this._onErrorSerializer(err));
+
+        //TODO
+        //Verificar outra tratativa
         this.opParser.on("error", (err) => this._onErrorParser(err));
         this.midParser.on("error", (err) => this._onErrorParser(err));
         //Errors
@@ -134,11 +137,17 @@ class LinkLayer extends Duplex {
 
     _onDataMidSerializer(data) {
 
-        if (this.linkLayerActive) {
-            if (data.mid !== NEGATIVE_ACK && data.mid !== POSITIVE_ACK) {
-                this.timer = setTimeout(() => this._resendMid(), this.timeOut);
-            }
+        if (data.mid !== NEGATIVE_ACK && data.mid !== POSITIVE_ACK) {
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => this._resendMid(), this.timeOut);
         }
+
+        // if (this.linkLayerActive) {
+        //     if (data.mid !== NEGATIVE_ACK && data.mid !== POSITIVE_ACK) {
+        //         clearTimeout(this.timer);
+        //         this.timer = setTimeout(() => this._resendMid(), this.timeOut);
+        //     }
+        // }
 
         this.messageParts = 0;
         let length = data.payload.length;
@@ -333,6 +342,8 @@ class LinkLayer extends Duplex {
             }
         }
 
+        clearTimeout(this.timer);
+
         if (this.rawData) {
             data._raw = Buffer.from(this.dataRaw);
         }
@@ -361,11 +372,9 @@ class LinkLayer extends Duplex {
     }
 
     _read(size) {
-
         if (this.stream.isPaused()) {
             this.stream.resume();
         }
-
     }
 
     _destroy() {

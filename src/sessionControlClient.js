@@ -206,7 +206,7 @@ class SessionControlClient extends EventEmitter {
         this.controllerData = null;
 
         this.keepAliveTimer = undefined;
-        this.receiverKeepAliveTimer = undefined;
+        // this.receiverKeepAliveTimer = undefined;
 
         this.onClose = false;
 
@@ -372,7 +372,7 @@ class SessionControlClient extends EventEmitter {
                 }
 
                 clearTimeout(this.keepAliveTimer);
-                clearTimeout(this.receiverKeepAliveTimer);
+                // clearTimeout(this.receiverKeepAliveTimer);
 
                 this.keepAliveTimer = setTimeout(() => this._sendKeepAlive(), this.keepAlive);
 
@@ -407,7 +407,7 @@ class SessionControlClient extends EventEmitter {
     close(err) {
 
         clearTimeout(this.keepAliveTimer);
-        clearTimeout(this.receiverKeepAliveTimer);
+        // clearTimeout(this.receiverKeepAliveTimer);
 
         this.onClose = true;
         this.statusConnection = CONN_NOT_CONNECT;
@@ -819,7 +819,7 @@ class SessionControlClient extends EventEmitter {
         }
 
         clearTimeout(this.keepAliveTimer);
-        clearTimeout(this.receiverKeepAliveTimer);
+        // clearTimeout(this.receiverKeepAliveTimer);
 
         this.keepAliveTimer = setTimeout(() => this._sendKeepAlive(), this.keepAlive);
 
@@ -941,20 +941,20 @@ class SessionControlClient extends EventEmitter {
         clearTimeout(this.keepAliveTimer);
         this.keepAliveTimer = setTimeout(() => this._sendKeepAlive(), this.keepAlive);
 
-        if (!this.receiverKeepAliveTimer || this.receiverKeepAliveTimer._idleTimeout === -1) {
-            this.receiverKeepAliveTimer = setTimeout(() => this._failKeepAlive(), this.keepAlive);
-        }
+        // if (!this.receiverKeepAliveTimer || this.receiverKeepAliveTimer._idleTimeout === -1) {
+        //     this.receiverKeepAliveTimer = setTimeout(() => this._failKeepAlive(), this.keepAlive);
+        // }
 
         this.request("keepAlive", (err) => {
-            clearTimeout(this.receiverKeepAliveTimer);
+            // clearTimeout(this.receiverKeepAliveTimer);
         });
     }
 
-    _failKeepAlive() {
-        clearTimeout(this.receiverKeepAliveTimer);
-        clearTimeout(this.keepAliveTimer);
-        this.close();
-    }
+    // _failKeepAlive() {
+    //     clearTimeout(this.receiverKeepAliveTimer);
+    //     clearTimeout(this.keepAliveTimer);
+    //     this.close();
+    // }
 
 
     /**
