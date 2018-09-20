@@ -43,43 +43,41 @@ describe("Session Control Client", () => {
     it("Should event connect with revision = 1", (done) => {
 
         let step = 0;
+        let sessionControlClient;
 
         let stream = createStreamHelper((data) => {
-            //console.log("Receiver", data.toString());            
+
             switch (step) {
                 case 0:
                     stream.push(Buffer.from("00260004001000000000000197\u0000"));
-                    step++;
                     break;
 
                 case 1:
                     stream.push(Buffer.from("00260004001000000000000197\u0000"));
-                    step++;
                     break;
 
                 case 2:
                     stream.push(Buffer.from("00260004001000000000000197\u0000"));
-                    step++;
                     break;
 
                 case 3:
                     stream.push(Buffer.from("00260004001000000000000197\u0000"));
-                    step++;
                     break;
 
                 case 4:
                     stream.push(Buffer.from("00260004001000000000000197\u0000"));
-                    step++;
                     break;
 
                 case 5:
                     stream.push(Buffer.from("00570002001000000000010001020103Airbag1                  \u0000"));
-                    step++;
                     break;
             }
+
+            step++;
+
         });
 
-        let sessionControlClient = new SessionControlClient({
+        sessionControlClient = new SessionControlClient({
             stream: stream
         });
 
@@ -99,12 +97,7 @@ describe("Session Control Client", () => {
         });
 
         let sessionControlClient = new SessionControlClient({
-            stream: stream,
-            defaultRevisions: {}
-        });
-
-        sessionControlClient.on("data", data => {
-            //console.log("SCC - Data:", data);
+            stream: stream
         });
 
         sessionControlClient.on("error", err => {
@@ -118,6 +111,7 @@ describe("Session Control Client", () => {
         });
 
         sessionControlClient.connect();
+
     });
 
     it("Should subscribe in lastTightening", (done) => {
@@ -126,6 +120,7 @@ describe("Session Control Client", () => {
         let step = 0;
 
         let stream = createStreamHelper((data) => {
+
             switch (step) {
                 case 0:
                     stream.push(Buffer.from("00570002001000000000010001020103Airbag1                  \u0000"));
@@ -143,16 +138,14 @@ describe("Session Control Client", () => {
             stream: stream
         });
 
-        sessionControlClient.on("data", data => {
-            //console.log("SCC - Data:", data);
-        });
-
         sessionControlClient.on("error", err => {
             console.log("SCC - Error:", err);
         });
 
         sessionControlClient.on("connect", () => {
-            sessionControlClient.subscribe("lastTightening", null, (err) => {
+
+            sessionControlClient.subscribe("lastTightening", null, (err, data) => {
+
                 expect(err).to.be.null;
                 sessionControlClient.close();
                 done();
@@ -574,7 +567,7 @@ describe("Session Control Client", () => {
 
             if (step === 2) {
                 step++;
-                stream.push(Buffer.from("0022003900100000000055\u0000"));                
+                stream.push(Buffer.from("0022003900100000000055\u0000"));
             }
         });
 
@@ -735,7 +728,7 @@ describe("Session Control Client", () => {
         });
 
         sessionControlClient.on("connect", () => {
-            
+
             sessionControlClient.subscribe("psetSelected", {}, (err, data) =>{
 
                 let mid = {
@@ -751,7 +744,7 @@ describe("Session Control Client", () => {
                         midNumber: 8
                     }
                 };
-    
+
                 expect(data).to.be.deep.equal(mid);
                 sessionControlClient.close();
                 done();
@@ -793,7 +786,7 @@ describe("Session Control Client", () => {
 
         sessionControlClient.on("connect", () => {
             sessionControlClient.unsubscribe("psetSelected", (err, data) => {
-                
+
                 let mid = {
                     mid: 5,
                     revision: 1,
@@ -807,7 +800,7 @@ describe("Session Control Client", () => {
                         midNumber: 9
                     }
                 };
-    
+
                 expect(data).to.be.deep.equal(mid);
                 sessionControlClient.close();
                 done();
@@ -907,7 +900,7 @@ describe("Session Control Client", () => {
 
                     let str = "002499970010010105000004\u0000";
                     expect(str).to.be.deep.equal(data.toString("ascii"));
-                    sessionControlClient.close();                    
+                    sessionControlClient.close();
                     done();
 
                     step += 1;
@@ -925,6 +918,37 @@ describe("Session Control Client", () => {
             stream: stream,
             genericMode: true,
             keepAlive: 200
+        });
+
+        sessionControlClient.connect();
+    });
+
+    it("Should close connection, fail send keepAlive by retry and timeout - Based Test 30/08/2018", (done) => {
+
+        let sessionControlClient;
+        let step = 0;
+
+        let stream = createStreamHelper((data) => {
+            switch (step) {
+                case 0:
+                    stream.push(Buffer.from("01790002006     0000010000020003PA160LDA2                04ACT052.2                0610.15.6            07                   08Silver (Ag)             09D240003   1000111001121130\u0000"));
+                    step += 1;
+                    break;
+            }
+        });
+
+        sessionControlClient = new SessionControlClient({
+            stream: stream,
+            genericMode: false,
+            keepAlive: 1000,
+            timeOut: 300
+        });
+
+        sessionControlClient.on('close', (err) => {
+            if (err) {
+                sessionControlClient.close();
+                done();
+            }
         });
 
         sessionControlClient.connect();

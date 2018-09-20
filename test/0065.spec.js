@@ -109,7 +109,7 @@ describe("MID 0065", () => {
                     prevailTorque: 632541,
                     jobSequenceNumber: 85236,
                     syncTighteningID: 25463,
-                    toolSerialNumber: 95623145874512,
+                    toolSerialNumber: "95623145874512",
                     timeStamp: "2018-06-06:12:20:00"
                 }
             });
@@ -165,7 +165,7 @@ describe("MID 0065", () => {
                     prevailTorque: 632541,
                     jobSequenceNumber: 85236,
                     syncTighteningID: 25463,
-                    toolSerialNumber: 95623145874512,
+                    toolSerialNumber: "95623145874512",
                     timeStamp: "2018-06-06:12:20:00",
                     torqueValuesUnit: 2,
                     resultType: 7
@@ -225,7 +225,7 @@ describe("MID 0065", () => {
                     prevailTorque: 632541,
                     jobSequenceNumber: 85236,
                     syncTighteningID: 25463,
-                    toolSerialNumber: 95623145874512,
+                    toolSerialNumber: "95623145874512",
                     timeStamp: "2018-06-06:12:20:00",
                     torqueValuesUnit: 2,
                     resultType: 7,
@@ -288,7 +288,7 @@ describe("MID 0065", () => {
                     prevailTorque: 632541,
                     jobSequenceNumber: 85236,
                     syncTighteningID: 25463,
-                    toolSerialNumber: 95623145874512,
+                    toolSerialNumber: "95623145874512",
                     timeStamp: "2018-06-06:12:20:00",
                     torqueValuesUnit: 2,
                     resultType: 7,
@@ -352,7 +352,7 @@ describe("MID 0065", () => {
                     prevailTorque: 632541,
                     jobSequenceNumber: 85236,
                     syncTighteningID: 25463,
-                    toolSerialNumber: 95623145874512,
+                    toolSerialNumber: "95623145874512",
                     timeStamp: "2018-06-06:12:20:00",
                     torqueValuesUnit: 2,
                     resultType: 7,
@@ -419,7 +419,7 @@ describe("MID 0065", () => {
                     prevailTorque: 632541,
                     jobSequenceNumber: 85236,
                     syncTighteningID: 25463,
-                    toolSerialNumber: 95623145874512,
+                    toolSerialNumber: "95623145874512",
                     timeStamp: "2018-06-06:12:20:00",
                     torqueValuesUnit: 2,
                     resultType: 7,
@@ -564,7 +564,7 @@ describe("MID 0065", () => {
                 prevailTorque: 632541,
                 jobSequenceNumber: 85236,
                 syncTighteningID: 25463,
-                toolSerialNumber: 95623145874512,
+                toolSerialNumber: "95623145874512",
                 timeStamp: "2018-06-06:12:20:00",
                 torqueValuesUnit: 2,
                 resultType: 7

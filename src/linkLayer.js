@@ -129,9 +129,7 @@ class LinkLayer extends Duplex {
     }
 
     _onErrorParser(err) {
-        // TODO
-        // this.emit("error", err);
-        this.emit("errorParser", err);
+        this.emit("error", err);
         return;
     }
 
@@ -141,13 +139,6 @@ class LinkLayer extends Duplex {
             clearTimeout(this.timer);
             this.timer = setTimeout(() => this._resendMid(), this.timeOut);
         }
-
-        // if (this.linkLayerActive) {
-        //     if (data.mid !== NEGATIVE_ACK && data.mid !== POSITIVE_ACK) {
-        //         clearTimeout(this.timer);
-        //         this.timer = setTimeout(() => this._resendMid(), this.timeOut);
-        //     }
-        // }
 
         this.messageParts = 0;
         let length = data.payload.length;
@@ -195,26 +186,10 @@ class LinkLayer extends Duplex {
     }
 
     _onDataOpSerializer(data) {
-
-        this.stream.write(data, () => {
-
-            if (!this.linkLayerActive) {
-
-                if (this.callbackWrite) {
-
-                    function doCallback(cb) {
-                        process.nextTick(() => cb());
-                    }
-
-                    doCallback(this.callbackWrite);
-                    this.callbackWrite = undefined;
-                }
-            }
-        });
+        this.stream.write(data);
     }
 
     _onDataStream(data) {
-
         if (this.rawData) {
             this.dataRaw = Buffer.from(data);
         }
@@ -335,14 +310,12 @@ class LinkLayer extends Duplex {
 
     _onDataMidParser(data) {
 
-        if (this.linkLayerActive) {
-            if (data.mid === POSITIVE_ACK || data.mid === NEGATIVE_ACK) {
-                this._receiverLinkLayer(data);
-                return;
-            }
-        }
-
         clearTimeout(this.timer);
+
+        if (data.mid === POSITIVE_ACK || data.mid === NEGATIVE_ACK) {
+            this._receiverLinkLayer(data);
+            return;
+        }
 
         if (this.rawData) {
             data._raw = Buffer.from(this.dataRaw);
@@ -383,6 +356,14 @@ class LinkLayer extends Duplex {
         this.opSerializer.destroy();
         this.midParser.destroy();
         this.midSerializer.destroy();
+    }
+
+    finishCycle(err) {
+
+        if (this.callbackWrite) {
+            this.callbackWrite(err);
+            this.callbackWrite = undefined;
+        }
     }
 
     /**
@@ -470,8 +451,6 @@ class LinkLayer extends Duplex {
      */
     _resendMid() {
 
-        let err = new Error(`[LinkLayer] timeout send MID[${this.message.mid}]`);
-
         clearTimeout(this.timer);
 
         if (this.resentTimes < this.retryTimes) {
@@ -480,6 +459,10 @@ class LinkLayer extends Duplex {
             this.resentTimes += 1;
 
         } else {
+
+            let err = new Error(`[LinkLayer] timeout send MID[${this.message.mid}]`);
+
+            this.resentTimes = 0;
 
             if (this.callbackWrite) {
 
