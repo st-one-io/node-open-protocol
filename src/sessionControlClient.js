@@ -1101,22 +1101,6 @@ class SessionControlClient extends EventEmitter {
         this._sendingProcess();
     }
 
-    /**
-     * @private
-     * @param {*} err
-     */
-    _onErrorParser(err) {
-
-        //TODO
-
-        if (this.midInProcess) {
-            this.midInProcess.doCallback(err);
-        }
-
-        this.inOperation = false;
-        this._sendingProcess();
-    }
-
 }
 
 class Message {
