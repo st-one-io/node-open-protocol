@@ -1,4 +1,10 @@
 ---
+#### 1.0.3
+
+- Fixed [#3](https://github.com/netsmarttech/node-open-protocol/issues/3)
+- Changed type of MID61.toolSerialNumber to `string`
+
+---
 #### 1.0.2
 
 - Update test
