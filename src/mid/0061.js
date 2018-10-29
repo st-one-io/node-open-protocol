@@ -88,7 +88,7 @@
  * @param {number} MID0061_2.tighteningID
  * @param {number} MID0061_2.jobSequenceNumber
  * @param {number} MID0061_2.syncTighteningID
- * @param {number} MID0061_2.toolSerialNumber
+ * @param {string} MID0061_2.toolSerialNumber
  * @param {string} MID0061_2.timeStamp
  * @param {string} MID0061_2.timeLastChange 
  * 
@@ -403,7 +403,7 @@ function parser(msg, opts, cb) {
                 processKey(msg, buffer, "syncTighteningID", 43, 2, position, cb) &&
                 processParser(msg, buffer, "syncTighteningID", "number", 5, position, cb) &&
                 processKey(msg, buffer, "toolSerialNumber", 44, 2, position, cb) &&
-                processParser(msg, buffer, "toolSerialNumber", "number", 14, position, cb) &&
+                processParser(msg, buffer, "toolSerialNumber", "string", 14, position, cb) &&
                 processKey(msg, buffer, "timeStamp", 45, 2, position, cb) &&
                 processParser(msg, buffer, "timeStamp", "string", 19, position, cb) &&
                 processKey(msg, buffer, "timeLastChange", 46, 2, position, cb) &&
@@ -776,7 +776,7 @@ function serializer(msg, opts, cb) {
                 serializerKey(msg, buf, 46, 2, position, cb) &&
                 serializerField(msg, buf, "timeStamp", "string", 19, position, cb) &&
                 serializerKey(msg, buf, 45, 2, position, cb) &&
-                serializerField(msg, buf, "toolSerialNumber", "number", 14, position, cb) &&
+                serializerField(msg, buf, "toolSerialNumber", "string", 14, position, cb) &&
                 serializerKey(msg, buf, 44, 2, position, cb) &&
                 serializerField(msg, buf, "syncTighteningID", "number", 5, position, cb) &&
                 serializerKey(msg, buf, 43, 2, position, cb) &&
