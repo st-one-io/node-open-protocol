@@ -143,7 +143,7 @@ class LinkLayer extends Duplex {
         this.messageParts = 0;
         let length = data.payload.length;
 
-        //Multi Parts           
+        //Multi Parts
         if (length > 9979) {
             let msgPart = 1;
             let parts = length / 9979;
@@ -339,6 +339,16 @@ class LinkLayer extends Duplex {
             if (this.sequenceNumber > 99) {
                 this.sequenceNumber = 1;
             }
+        }
+
+        // if this is an ack, callback immediately
+        if (msg.isAck) {
+            clearTimeout(this.timeout);
+            delete msg.isAck;
+            process.nextTick(() => {
+                this.callbackWrite = null;
+                callback();
+            });
         }
 
         this.midSerializer.write(msg);
