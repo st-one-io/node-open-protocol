@@ -134,8 +134,7 @@ class LinkLayer extends Duplex {
     }
 
     _onDataMidSerializer(data) {
-
-        if (data.mid !== NEGATIVE_ACK && data.mid !== POSITIVE_ACK) {
+        if (data.mid !== NEGATIVE_ACK && data.mid !== POSITIVE_ACK && !data.isAck) {
             clearTimeout(this.timer);
             this.timer = setTimeout(() => this._resendMid(), this.timeOut);
         }
@@ -178,7 +177,7 @@ class LinkLayer extends Duplex {
             return;
         }
 
-        if (data.mid !== POSITIVE_ACK && data.mid !== NEGATIVE_ACK) {
+        if (data.mid !== POSITIVE_ACK && data.mid !== NEGATIVE_ACK && !data.isAck) {
             this.message = data;
         }
 
@@ -344,7 +343,6 @@ class LinkLayer extends Duplex {
         // if this is an ack, callback immediately
         if (msg.isAck) {
             clearTimeout(this.timeout);
-            delete msg.isAck;
             process.nextTick(() => {
                 this.callbackWrite = null;
                 callback();
