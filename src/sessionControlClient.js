@@ -438,7 +438,7 @@ class SessionControlClient extends EventEmitter {
         this.midInProcess = null;
         this.midQueue = [];
 
-        this.autoRevision = null;
+        this.autoRevision = {};
 
         this.ll.destroy();
         this.stream.end();
