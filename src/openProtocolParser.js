@@ -42,6 +42,7 @@ class OpenProtocolParser extends Transform {
 
         super(opts);
 
+        this.rawData = opts.rawData || false;
         this._nBuffer = null;
         debug("new OpenProtocolParser");
     }
@@ -65,9 +66,10 @@ class OpenProtocolParser extends Transform {
 
         while (ptr < chunk.length) {
 
-            let obj = {
-                raw: chunk
-            };
+            let obj = {};
+            if (this.rawData) {
+                obj._raw = chunk;
+            }
 
             let length = chunk.toString(encodingOP, ptr, ptr + 4);
 
