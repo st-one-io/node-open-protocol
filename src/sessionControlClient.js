@@ -297,6 +297,8 @@ class SessionControlClient extends EventEmitter {
 
         let receivedReply = (data) => {
 
+            this.emit("data", data);
+
             if (data.mid === 4) {
 
                 if (data.payload.midNumber !== 1) {
