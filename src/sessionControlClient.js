@@ -977,7 +977,7 @@ class SessionControlClient extends EventEmitter {
 
         if (data.mid === 4 || data.mid === 5) {
 
-            if (!this.midInProcess || !this.midInProcess._callback) {
+            if (!this.midInProcess) {
                 return;
             }
 
@@ -1065,18 +1065,9 @@ class SessionControlClient extends EventEmitter {
             if (replyGroup === this.midInProcess.group) {
 
                 this.ll.finishCycle();
-
-                if (!this.midInProcess._callback) {
-                    return;
-                }
-
                 this.midInProcess.doCallback(null, data);
 
             } else {
-
-                if (!this.midInProcess._callback) {
-                    return;
-                }
 
                 let err = new Error(`[Session Control Client] invalid reply, expect MID[${JSON.stringify(midReply)}], received [${data.mid}]`);
                 this.ll.finishCycle(err);
@@ -1103,7 +1094,7 @@ class SessionControlClient extends EventEmitter {
      */
     _onErrorSerializer(err) {
 
-        if (this.midInProcess._callback) {
+        if (this.midInProcess) {
             this.midInProcess.doCallback(err);
         }
 
