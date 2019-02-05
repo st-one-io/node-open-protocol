@@ -440,7 +440,7 @@ class SessionControlClient extends EventEmitter {
 
         this.autoRevision = null;
 
-        this.ll.destroy();
+        this.ll._destroy();
         this.stream.end();
 
         this.emit("close", err);
