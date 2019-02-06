@@ -828,12 +828,6 @@ class SessionControlClient extends EventEmitter {
             return;
         }
 
-        if (this.midInProcess.type === MANUAL) {
-            this.midInProcess.doCallback();
-            this.inOperation = false;
-            this._sendingProcess();
-        }
-
         clearTimeout(this.keepAliveTimer);
 
         this.keepAliveTimer = setTimeout(() => this._sendKeepAlive(), this.keepAlive);
@@ -984,24 +978,33 @@ class SessionControlClient extends EventEmitter {
 
         this.emit("data", data);
 
-        if (data.mid === 4 || data.mid === 5) {
+        if (!this.midInProcess) {
+            return;
+        }
 
-            if (!this.midInProcess) {
-                return;
-            }
+        if (data.mid === 5) {
+            //Positive acknowledge
+            this.midInProcess.doCallback(null, data);
+            this.inOperation = false;
+            this._sendingProcess();
+            return;
+        }
 
+        if (data.mid === 4) {
+
+            // Reference MID
             let midNumber = data.payload.midNumber;
 
-            if (!this.midInProcess || midNumber !== this.midInProcess.midNumber) {
+            // Verify that the mid referenced in the response is equal to the mid sent.
+            if (midNumber !== this.midInProcess.midNumber) {
                 let err = new Error(`[Session Control Client] invalid acknowledge, expect MID[${this.midInProcess.midNumber}], received MID[${midNumber}]`);
                 this.midInProcess.doCallback(err);
-                // this.ll.finishCycle(err);
                 this.inOperation = false;
                 this._sendingProcess();
                 return;
             }
 
-            if (data.mid === 4 && (midNumber === 6 || midNumber === 8 || midNumber === 9) && this.useGenerics) {
+            if ((midNumber === 6 || midNumber === 8 || midNumber === 9) && this.useGenerics) {
 
                 let errorCode = data.payload.errorCode;
 
@@ -1010,7 +1013,6 @@ class SessionControlClient extends EventEmitter {
                 if (errorCode === 74 || errorCode === 76) {
                     this.changeRevision = true;
                     this.changeRevisionGeneric = true;
-                    // this.ll.finishCycle();
                     this._transmitMid();
                     return;
                 }
@@ -1019,26 +1021,21 @@ class SessionControlClient extends EventEmitter {
             //Error 97: MID revision unsupported
             if (data.mid === 4 && data.payload.errorCode === 97) {
                 this.changeRevision = true;
-                // this.ll.finishCycle();
                 this._transmitMid();
                 return;
             }
 
-            if (data.mid === 4) {
-                let errorCode = helpers.padLeft(data.payload.errorCode, 2);
-                let err = new Error(`[Session Control Client] negative acknowledge, MID[${midNumber}], Error[${constants.ERROR[errorCode]}]`);
-                this.midInProcess.doCallback(err);
-                // this.ll.finishCycle(err);
-                this.inOperation = false;
-                this._sendingProcess();
-                return;
-            }
-
-            //Positive acknowledge
-            // this.ll.finishCycle();
-            this.midInProcess.doCallback(null, data);
+            let errorCode = helpers.padLeft(data.payload.errorCode, 2);
+            let err = new Error(`[Session Control Client] negative acknowledge, MID[${midNumber}], Error[${constants.ERROR[errorCode]}]`);
+            this.midInProcess.doCallback(err);
             this.inOperation = false;
             this._sendingProcess();
+            return;
+            
+        }
+
+        if(this.midInProcess.type === MANUAL){
+            this.midInProcess.doCallback(null, data);
             return;
         }
 
@@ -1057,14 +1054,10 @@ class SessionControlClient extends EventEmitter {
 
             this.emit("__SubscribeData__", obj);
 
-            // this.ll.finishCycle();
-
             if (!this.useLinkLayer) {
-
                 this.ll.write({
                     mid: midGroupList[dataGroup].ack
                 });
-
                 return;
             }
         }
@@ -1072,14 +1065,9 @@ class SessionControlClient extends EventEmitter {
         if (replyGroup !== undefined) {
 
             if (replyGroup === this.midInProcess.group) {
-
-                // this.ll.finishCycle();
                 this.midInProcess.doCallback(null, data);
-
             } else {
-
                 let err = new Error(`[Session Control Client] invalid reply, expect MID[${JSON.stringify(midReply)}], received [${data.mid}]`);
-                // this.ll.finishCycle(err);
                 this.midInProcess.doCallback(err);
             }
 
