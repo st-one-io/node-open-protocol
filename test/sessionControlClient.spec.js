@@ -31,7 +31,7 @@ function createStreamHelper(cbWrite) {
 
         },
         write(chunk, encoding, cb) {
-            cbWrite(chunk);
+            process.nextTick(() => cbWrite(chunk));
             cb();
         }
     });
@@ -949,6 +949,73 @@ describe("Session Control Client", () => {
                 sessionControlClient.close();
                 done();
             }
+        });
+
+        sessionControlClient.connect();
+    });
+
+    it("Should event data using sendMID() [MID 0080] - Test 05/02/2019", (done) => {
+
+        let step = 0;
+
+        let stream = createStreamHelper((data) => {
+
+            console.log(`Receiver step: ${step}`, data.toString());
+
+            switch (step) {
+                case 0:
+                    step++;
+                    stream.push(Buffer.from("00570002001000000000010001020103Airbag1                  \u0000"));
+                    break;
+
+                case 1:
+                    step++;
+                    stream.push(Buffer.from("003900810010000000002019-02-05:11:22:33\u0000"));
+                    break;
+
+                case 2:
+                    step++;
+                    stream.push(Buffer.from("003900810010000000002019-02-05:11:22:33\u0000"));
+                    break;
+
+
+            }
+        });
+
+        let sessionControlClient = new SessionControlClient({
+            stream: stream
+        });
+
+
+        sessionControlClient.on("error", (error) => {
+            console.log(" Receiver Error", error);
+            throw error;
+        });
+
+        sessionControlClient.on("data", (data) => {
+            console.log(`Receiver Data step: ${step}`, data);           
+
+            // if (step === 2) {
+            //     step++;
+            //     sessionControlClient.sendMid(80, {
+            //         revision: 1
+            //     });
+            // }
+
+            // if (step === 2) {
+            //     expect(data.mid).to.be.equal(81);
+            //     sessionControlClient.close();
+            //     done();
+            // }
+        });
+
+        sessionControlClient.on("connect", (data) => {
+
+            console.log("Connect");
+
+            sessionControlClient.sendMid(80, {
+                revision: 1
+            });
         });
 
         sessionControlClient.connect();
