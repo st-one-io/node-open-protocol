@@ -297,12 +297,14 @@ class SessionControlClient extends EventEmitter {
 
         let receivedReply = (data) => {
 
+            this.ll.finishCycle();
+
             if (data.mid === 4) {
 
                 if (data.payload.midNumber !== 1) {
                     let e = new Error(`[Session Control Client] [Connect] invalid acknowledge, expect MID[1], received MID[${data.payload.midNumber}]`);
                     this.emit("error", e);
-                    this.ll.finishCycle(e);
+                    // this.ll.finishCycle(e);
                     return;
                 }
 
@@ -311,15 +313,14 @@ class SessionControlClient extends EventEmitter {
                     let newPosition = this.autoRevision["1"].position + 1;
                     this.autoRevision["1"].value = mids[2].revision()[newPosition];
                     this.autoRevision["1"].position = newPosition;
-
-                    this.ll.finishCycle();
+                    // this.ll.finishCycle();
                     sendMidOne();
 
                 } else {
 
                     let errorCode = helpers.padLeft(data.payload.errorCode, 2);
                     let e = new Error(`[Session Control Client] [Connect] negative acknowledge, MID[${data.payload.midNumber}], Error [${constants.ERROR[errorCode]}]`);
-                    this.ll.finishCycle(e);
+                    // this.ll.finishCycle(e);
                     this.emit("error", e);
 
                 }
@@ -351,7 +352,7 @@ class SessionControlClient extends EventEmitter {
 
                 this.ll.removeAllListeners();
 
-                this.ll.finishCycle();
+                // this.ll.finishCycle();
 
                 this.statusConnection = CONN_CONNECTED;
                 this.controllerData = data;
@@ -972,6 +973,14 @@ class SessionControlClient extends EventEmitter {
      * @param {*} data
      */
     _onDataLinkLayer(data) {
+        // Call callback of Link Layer
+        this.ll.finishCycle();
+
+        // Send data to treatment
+        this._receiverData(data);
+    }
+
+    _receiverData(data) {
 
         this.emit("data", data);
 
@@ -986,7 +995,7 @@ class SessionControlClient extends EventEmitter {
             if (!this.midInProcess || midNumber !== this.midInProcess.midNumber) {
                 let err = new Error(`[Session Control Client] invalid acknowledge, expect MID[${this.midInProcess.midNumber}], received MID[${midNumber}]`);
                 this.midInProcess.doCallback(err);
-                this.ll.finishCycle(err);
+                // this.ll.finishCycle(err);
                 this.inOperation = false;
                 this._sendingProcess();
                 return;
@@ -1001,7 +1010,7 @@ class SessionControlClient extends EventEmitter {
                 if (errorCode === 74 || errorCode === 76) {
                     this.changeRevision = true;
                     this.changeRevisionGeneric = true;
-                    this.ll.finishCycle();
+                    // this.ll.finishCycle();
                     this._transmitMid();
                     return;
                 }
@@ -1010,7 +1019,7 @@ class SessionControlClient extends EventEmitter {
             //Error 97: MID revision unsupported
             if (data.mid === 4 && data.payload.errorCode === 97) {
                 this.changeRevision = true;
-                this.ll.finishCycle();
+                // this.ll.finishCycle();
                 this._transmitMid();
                 return;
             }
@@ -1019,14 +1028,14 @@ class SessionControlClient extends EventEmitter {
                 let errorCode = helpers.padLeft(data.payload.errorCode, 2);
                 let err = new Error(`[Session Control Client] negative acknowledge, MID[${midNumber}], Error[${constants.ERROR[errorCode]}]`);
                 this.midInProcess.doCallback(err);
-                this.ll.finishCycle(err);
+                // this.ll.finishCycle(err);
                 this.inOperation = false;
                 this._sendingProcess();
                 return;
             }
 
             //Positive acknowledge
-            this.ll.finishCycle();
+            // this.ll.finishCycle();
             this.midInProcess.doCallback(null, data);
             this.inOperation = false;
             this._sendingProcess();
@@ -1048,7 +1057,7 @@ class SessionControlClient extends EventEmitter {
 
             this.emit("__SubscribeData__", obj);
 
-            this.ll.finishCycle();
+            // this.ll.finishCycle();
 
             if (!this.useLinkLayer) {
 
@@ -1064,13 +1073,13 @@ class SessionControlClient extends EventEmitter {
 
             if (replyGroup === this.midInProcess.group) {
 
-                this.ll.finishCycle();
+                // this.ll.finishCycle();
                 this.midInProcess.doCallback(null, data);
 
             } else {
 
                 let err = new Error(`[Session Control Client] invalid reply, expect MID[${JSON.stringify(midReply)}], received [${data.mid}]`);
-                this.ll.finishCycle(err);
+                // this.ll.finishCycle(err);
                 this.midInProcess.doCallback(err);
             }
 
