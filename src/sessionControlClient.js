@@ -1067,7 +1067,7 @@ class SessionControlClient extends EventEmitter {
             if (replyGroup === this.midInProcess.group) {
                 this.midInProcess.doCallback(null, data);
             } else {
-                let err = new Error(`[Session Control Client] invalid reply, expect MID[${JSON.stringify(midReply)}], received [${data.mid}]`);
+                let err = new Error(`[Session Control Client] invalid reply, expect MID[${this.midInProcess.group}], received [${replyGroup}]`);
                 this.midInProcess.doCallback(err);
             }
 
