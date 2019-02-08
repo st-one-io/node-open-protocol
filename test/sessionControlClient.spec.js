@@ -547,10 +547,6 @@ describe("Session Control Client", () => {
                     stream.push(Buffer.from("00256535001000000000TESTE\u0000"));
                     break;
 
-                case 2:
-                    step++;
-                    stream.push(Buffer.from("0022003900100000000055\u0000"));
-                    break;
             }
         });
 
@@ -559,16 +555,9 @@ describe("Session Control Client", () => {
         });
 
         sessionControlClient.on("data", (data) => {
-            if (step === 3) {
-                expect(data.mid).to.be.equal(39);
-                sessionControlClient.close();
-                done();
-            }
-
-            if (step === 2) {
-                step++;
-                stream.push(Buffer.from("0022003900100000000055\u0000"));
-            }
+            expect(data.mid).to.be.equal(6535);
+            sessionControlClient.close();
+            done();
         });
 
         sessionControlClient.on("connect", (data) => {
@@ -960,8 +949,6 @@ describe("Session Control Client", () => {
 
         let stream = createStreamHelper((data) => {
 
-            console.log(`Receiver step: ${step}`, data.toString());
-
             switch (step) {
                 case 0:
                     step++;
@@ -972,12 +959,6 @@ describe("Session Control Client", () => {
                     step++;
                     stream.push(Buffer.from("003900810010000000002019-02-05:11:22:33\u0000"));
                     break;
-
-                case 2:
-                    step++;
-                    stream.push(Buffer.from("003900810010000000002019-02-05:11:22:33\u0000"));
-                    break;
-
 
             }
         });
@@ -993,26 +974,12 @@ describe("Session Control Client", () => {
         });
 
         sessionControlClient.on("data", (data) => {
-            console.log(`Receiver Data step: ${step}`, data);           
-
-            // if (step === 2) {
-            //     step++;
-            //     sessionControlClient.sendMid(80, {
-            //         revision: 1
-            //     });
-            // }
-
-            // if (step === 2) {
-            //     expect(data.mid).to.be.equal(81);
-            //     sessionControlClient.close();
-            //     done();
-            // }
+            expect(data.mid).to.be.deep.equal(81);
+            sessionControlClient.close();
+            done();
         });
 
         sessionControlClient.on("connect", (data) => {
-
-            console.log("Connect");
-
             sessionControlClient.sendMid(80, {
                 revision: 1
             });
