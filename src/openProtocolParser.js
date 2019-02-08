@@ -25,7 +25,7 @@ const constants = require("./constants.json");
 
 const encodingOP = constants.defaultEncoder;
 
-var debug = util.debuglog('openProtocol');
+var debug = util.debuglog('[OpenProtocol] OpenProtocolParser');
 
 class OpenProtocolParser extends Transform {
 

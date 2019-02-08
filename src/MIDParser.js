@@ -26,6 +26,7 @@ const mids = helpers.getMids();
 const constants = require("./constants.json");
 const encodingOP = constants.defaultEncoder;
 
+var debug = util.debuglog('[OpenProtocol] MIDParser');
 
 class MIDParser extends Transform {
 
@@ -39,6 +40,8 @@ class MIDParser extends Transform {
      */
     constructor(opts) {
 
+        debug("new MIDParser");
+
         opts = opts || {};
 
         opts.writableObjectMode = true;        
@@ -49,12 +52,15 @@ class MIDParser extends Transform {
 
     _transform(chunk, encoding, cb) {
 
+        debug("new MIDParser _transform");
+
         if(mids[chunk.mid]){
 
             mids[chunk.mid].parser(chunk, null, (err, data) => {
                 
                 if(err){
                     cb(new Error(`Error on parser [${err}]`));
+                    debug("new MIDParser _transform err-parser", chunk, err);
                     return;
                 }
 
@@ -66,6 +72,7 @@ class MIDParser extends Transform {
 
             if(!Buffer.isBuffer(chunk.payload)){
                 cb(new Error(`Error on parser - invalid payload MID [${chunk.mid}]`));
+                debug("new MIDParser _transform err-invalid_payload_MID", chunk);
                 return;
             }
 

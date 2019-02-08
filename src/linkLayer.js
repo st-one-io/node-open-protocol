@@ -26,6 +26,8 @@ const MIDParser = require("./MIDParser");
 const MIDSerializer = require("./MIDSerializer");
 const constants = require("./constants.json");
 
+var debug = util.debuglog('[OpenProtocol] LinkLayer');
+
 const POSITIVE_ACK = 9997;
 const NEGATIVE_ACK = 9998;
 
@@ -46,6 +48,8 @@ class LinkLayer extends Duplex {
      */
     constructor(opts) {
 
+        debug("new LinkLayer");
+
         opts = opts || {};
         opts.readableObjectMode = true;
         opts.writableObjectMode = true;
@@ -53,7 +57,8 @@ class LinkLayer extends Duplex {
         super(opts);
 
         if (opts.stream === undefined) {
-            throw new Error("[LinkLayer] Socket is undefined");
+            debug("LinkLayer constructor err-socket-undefined");
+            throw new Error("[LinkLayer] Socket is undefined");            
         }
 
         //Create instances of manipulators
@@ -109,6 +114,8 @@ class LinkLayer extends Duplex {
 
     _onErrorSerializer(err) {
 
+        debug("LinkLayer _onErrorSerializer", this, err);
+
         if (this.linkLayerActive) {
             this.sequenceNumber--;
         }
@@ -129,11 +136,14 @@ class LinkLayer extends Duplex {
     }
 
     _onErrorParser(err) {
+        debug("LinkLayer _onErrorParser", err);
         this.emit("error", err);
         return;
     }
 
     _onDataMidSerializer(data) {
+
+        debug("LinkLayer _onDataMidSerializer");
 
         if (data.mid !== NEGATIVE_ACK && data.mid !== POSITIVE_ACK) {
             clearTimeout(this.timer);
@@ -153,6 +163,7 @@ class LinkLayer extends Duplex {
 
             if (parts > 9) {
                 this.emit("error", new Error(`[LinkLayer] number of messages > 9, MID[${data.mid}], length buffer [${length}]`));
+                debug("LinkLayer _onDataMidSerializer err_parts_9", data);
                 return;
             }
 
@@ -186,10 +197,12 @@ class LinkLayer extends Duplex {
     }
 
     _onDataOpSerializer(data) {
+        debug("LinkLayer _onDataOpSerializer");
         this.stream.write(data);
     }
 
     _onDataStream(data) {
+        debug("LinkLayer _onDataStream");
         if (this.rawData) {
             this.dataRaw = Buffer.from(data);
         }
@@ -198,6 +211,8 @@ class LinkLayer extends Duplex {
     }
 
     _onDataOpParser(data) {
+
+        debug("LinkLayer _onDataOpParser");
 
         let duplicateMsg = false;
 
@@ -222,6 +237,7 @@ class LinkLayer extends Duplex {
                 }
 
                 this.emit("error", new Error(`[LinkLayer] inconsistency message number, MID[${data.mid}]`));
+                debug("LinkLayer _onDataOpParser err_inconsistency_message_number", data);
 
                 return;
             }
@@ -261,6 +277,7 @@ class LinkLayer extends Duplex {
                 if (data.mid === POSITIVE_ACK || data.mid === NEGATIVE_ACK) {
                     if (data.sequenceNumber !== (this.sequenceNumber)) {
                         this.emit("error", new Error(`[LinkLayer] sequence number invalid, MID[${data.mid}], received[${data.sequenceNumber}], expected[${this.sequenceNumber}]`));
+                        debug(`LinkLayer _onDataOpParser err_sequence_number_invalid - MID[${data.mid}], received[${data.sequenceNumber}], expected[${this.sequenceNumber}]`, data);
                         return;
                     }
                 } else {
@@ -277,6 +294,7 @@ class LinkLayer extends Duplex {
                             });
 
                             this.emit("error", new Error(`[LinkLayer] sequence number invalid, MID[${data.mid}]`));
+                            debug(`LinkLayer _onDataOpParser err_sequence_number_invalid - MID[${data.mid}]`, data);
                             return;
                         }
                     }
@@ -310,6 +328,8 @@ class LinkLayer extends Duplex {
 
     _onDataMidParser(data) {
 
+        debug("LinkLayer _onDataMidParser");
+
         clearTimeout(this.timer);
 
         if (data.mid === POSITIVE_ACK || data.mid === NEGATIVE_ACK) {
@@ -329,6 +349,8 @@ class LinkLayer extends Duplex {
 
     _write(msg, encoding, callback) {
 
+        debug("LinkLayer _write", msg);
+
         this.callbackWrite = callback;
         this.resentTimes = 0;
 
@@ -345,12 +367,18 @@ class LinkLayer extends Duplex {
     }
 
     _read(size) {
+
+        debug("LinkLayer _read");
+
         if (this.stream.isPaused()) {
             this.stream.resume();
         }
     }
 
     _destroy() {
+
+        debug("LinkLayer _destroy");
+
         clearTimeout(this.timer);
         this.opParser.destroy();
         this.opSerializer.destroy();
@@ -359,6 +387,8 @@ class LinkLayer extends Duplex {
     }
 
     finishCycle(err) {
+
+        debug("LinkLayer finishCycle");
 
         if (this.callbackWrite) {
             this.callbackWrite(err);
@@ -370,6 +400,9 @@ class LinkLayer extends Duplex {
      * Enable LinkLayer
      */
     activateLinkLayer() {
+
+        debug("LinkLayer activateLinkLayer");
+
         this.linkLayerActive = true;
         this.sequenceNumber = 1;
     }
@@ -378,6 +411,9 @@ class LinkLayer extends Duplex {
      * Disable LinkLayer
      */
     deactivateLinkLayer() {
+
+        debug("LinkLayer deactivateLinkLayer");
+
         this.linkLayerActive = false;
         clearTimeout(this.timer);
     }
@@ -387,6 +423,8 @@ class LinkLayer extends Duplex {
      * @param {*} data
      */
     _receiverLinkLayer(data) {
+
+        debug("LinkLayer _receiverLinkLayer");
 
         clearTimeout(this.timer);
 
@@ -406,6 +444,9 @@ class LinkLayer extends Duplex {
                 this.callbackWrite = undefined;
 
             } else {
+                
+                debug(`LinkLayer _receiverLinkLayer err-incorrect_fields_MID - MID[${data.payload.midNumber}] - Error code [${data.payload.errorCode}] -` +
+                ` Expect MID[${this.message.mid}] - Expect SequenceNumber [${this.sequenceNumber}] - Current SequenceNumber [${data.sequenceNumber}]`);
                 this.emit("error", err);
             }
             return;
@@ -433,6 +474,8 @@ class LinkLayer extends Duplex {
      */
     _sendLinkLayer(mid, sequenceNumber, payload) {
 
+        debug("LinkLayer _sendLinkLayer");
+
         if (sequenceNumber === 99) {
             sequenceNumber = 0;
         }
@@ -450,6 +493,8 @@ class LinkLayer extends Duplex {
      * @private
      */
     _resendMid() {
+
+        debug("LinkLayer _resendMid");
 
         clearTimeout(this.timer);
 
@@ -475,6 +520,7 @@ class LinkLayer extends Duplex {
                 this.callbackWrite = undefined;
 
             } else {
+                debug(`LinkLayer _resendMid  err-timeout_send_MID - MID[${this.message.mid}]`);
                 this.emit("error", err);
             }
         }

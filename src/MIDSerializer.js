@@ -23,6 +23,8 @@ const {
 const helpers = require("./helpers.js");
 const mids = helpers.getMids();
 
+var debug = util.debuglog('[OpenProtocol] MIDSerializer');
+
 class MIDSerializer extends Transform {
 
     /**
@@ -34,6 +36,8 @@ class MIDSerializer extends Transform {
      * @param opts parameters to Transform stream
      */
     constructor(opts) {
+        debug("new MIDSerializer");
+
         opts = opts || {};
         opts.writableObjectMode = true;
         opts.readableObjectMode = true;
@@ -42,11 +46,15 @@ class MIDSerializer extends Transform {
 
     _transform(chunk, encoding, cb) {
 
+        debug(`MIDSerializer _transform`);
+
         if(mids[chunk.mid]){
+            
             mids[chunk.mid].serializer(chunk, null, (err, data) => {
                 
                 if(err){
                     cb(new Error(`Error on serializer [${err}]`));
+                    debug(`MIDSerializer _transform err-serializer`, chunk, err);
                     return;
                 }
 
@@ -62,6 +70,7 @@ class MIDSerializer extends Transform {
 
             if(typeof chunk.payload !== "string" && !Buffer.isBuffer(chunk.payload)){
                 cb(new Error(`Error on serializer - invalid payload MID [${chunk.mid}]`));
+                debug(`MIDSerializer _transform err-invalid_payload_MID`, chunk);
                 return;
             }
 
