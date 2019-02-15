@@ -1,6 +1,6 @@
 {
   "name": "node-open-protocol",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Node of Open Protocol",
   "main": "index.js",
   "directories": {
