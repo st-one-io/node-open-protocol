@@ -1,3 +1,6 @@
+#### 1.0.4
+- Added support for node 6.x
+
 ---
 #### 1.0.3
 
