@@ -440,7 +440,12 @@ class SessionControlClient extends EventEmitter {
 
         this.autoRevision = null;
 
-        this.ll._destroy();
+        // handles Node versions older than 8.x
+        if(typeof this.ll.destroy === 'function'){
+            this.ll.destroy();
+        } else {
+            this.ll._destroy();
+        }
         this.stream.end();
 
         this.emit("close", err);
