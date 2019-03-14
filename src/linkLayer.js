@@ -328,7 +328,7 @@ class LinkLayer extends Duplex {
 
         // if this is an ack, callback immediately
         if (msg.isAck) {
-            clearTimeout(this.timeout);
+            clearTimeout(this.timer);
             process.nextTick(() => {
                 this.callbackWrite = null;
                 callback();
