@@ -96,6 +96,11 @@ function parser(msg, opts, cb) {
 
     const keys = revisionKeys[revision - 1];
 
+    if (!keys){
+        cb(new Error(`[Parser MID${msg.mid}] invalid revision [${msg.revision}]`));
+        return;
+    }
+
     for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
         status =
@@ -110,9 +115,11 @@ function parser(msg, opts, cb) {
 }
 
 function serializer(msg, opts, cb) {
-    let buf = Buffer.from("");
-    msg.payload = buf;
-    cb(null, msg);
+    cb(new Error(`[Serializer MID${msg.mid}] still not implemented`));
+
+    //let buf = Buffer.from("");
+    //msg.payload = buf;
+    //cb(null, msg);
 }
 
 function revision() {
