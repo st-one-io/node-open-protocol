@@ -155,32 +155,6 @@ describe("Simple MIDs", () => {
         });
     });
 
-    it("MID0035", (done) => {
-
-        let midTest = 35;
-        let revisions = 5;
-
-        let mid = mids[midTest];
-        let msg = {
-            payload: Buffer.from("MID-Teste")
-        };
-
-        mid.parser(msg, {}, (err, data) => {
-            expect(err).to.be.null;
-            expect(data).to.be.deep.equal({
-                payload: "MID-Teste"
-            });
-
-            mid.serializer(data, {}, (err, data) => {
-                expect(err).to.be.null;
-                expect(data).to.be.deep.equal(msg);
-            });
-
-            expect(mid.revision()).to.have.lengthOf(revisions);
-            done();
-        });
-    });
-
     it("MID0040", (done) => {
 
         let midTest = 40;
