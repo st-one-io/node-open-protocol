@@ -62,7 +62,25 @@ const rev4Keys = [
     ['jobTighteningStatus', 'number', 2]
 ];
 
-const revisionKeys = [rev1Keys, rev2Keys, rev3Keys, rev4Keys];
+const rev5Keys = [
+    ['jobID', 'number', 4],
+    ['jobStatus', 'number', 1],
+    ['jobBatchMode', 'number', 1],
+    ['jobBatchSize', 'number', 4],
+    ['jobBatchCounter', 'number', 4],
+    ['timeStamp', 'string', 19],
+    ['jobCurrentStep', 'number', 3],
+    ['jobTotalSteps', 'number', 3],
+    ['jobStepType', 'number', 2],
+    ['jobTighteningStatus', 'number', 2],
+    ['jobSequenceNumber', 'number', 5],
+    ['numberVIN', 'string', 25],
+    ['identifierPart2', 'string', 25],
+    ['identifierPart3', 'string', 25],
+    ['identifierPart4', 'string', 25]
+];
+
+const revisionKeys = [rev1Keys, rev2Keys, rev3Keys, rev4Keys, rev5Keys];
 
 function parser(msg, opts, cb) {
     let buffer = msg.payload;
