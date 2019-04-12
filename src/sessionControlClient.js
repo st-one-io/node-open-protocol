@@ -438,7 +438,7 @@ class SessionControlClient extends EventEmitter {
         this.midInProcess = null;
         this.midQueue = [];
 
-        this.autoRevision = null;
+        this.autoRevision = {};
 
         // handles Node versions older than 8.x
         if(typeof this.ll.destroy === 'function'){
