@@ -32,7 +32,11 @@ const revKeys = [
     ["simpleStatus", "number", 1],
     ["pmStatus", "number", 1],
     ["wpId", "string", 40],
-    ["numberOfBolts", "number", 2],
+    ["numberOfBolts", "number", 2]
+];
+
+// these repeat for each numberOfBolts, starting at parameter number 13
+const boltKeys = [
     ["ordinalBoltNumber", "number", 2],
     ["simpleBoltStatus", "number", 1],
     ["torqueStatus", "number", 1],
@@ -42,9 +46,7 @@ const revKeys = [
     ["boltTHighLimit", "number", 7],
     ["boltTLowLimit", "number", 7],
     ["boltAHighLimit", "number", 7],
-    ["boltALowLimit", "number", 7],
-    ["numberOfSpecialValues", "number", 2]
-    // <special values>
+    ["boltALowLimit", "number", 7]
 ];
 
 function parser(msg, opts, cb) {
@@ -71,6 +73,37 @@ function parser(msg, opts, cb) {
                     processKey(msg, buffer, key[0], i + 1, 2, position, cb) &&
                     processParser(msg, buffer, key[0], key[1], key[2], position, cb);
             }
+
+            if (!status) return; //we've already failed, return
+
+            // these parameters repeats for each numberOfBolts
+            msg.payload.bolts = [];
+            for (let boltNr = 0; boltNr < msg.payload.numberOfBolts; boltNr++){
+                // let's fake a message for the parsing, so we can get it's payload
+                // and copy to the real message later
+                let boltPart = { 
+                    mid: msg.mid,
+                    payload: {}
+                }
+
+                // parse items
+                for (let i = 0; i < boltKeys.length; i++) {
+                    const key = boltKeys[i];
+                    status = status &&
+                        processKey(boltPart, buffer, key[0], i + 13, 2, position, cb) &&
+                        processParser(boltPart, buffer, key[0], key[1], key[2], position, cb);
+                }
+
+                if (!status) return; //we've already failed, return
+
+                //copy from fake message to real one
+                msg.payload.bolts.push(boltPart.payload);
+            }
+
+            // get count of special values
+            status = status &&
+                processKey(msg, buffer, "numberOfSpecialValues", 23, 2, position, cb) &&
+                processParser(msg, buffer, "numberOfSpecialValues", "number", 2, position, cb);
 
             // special values
             msg.payload.specialValues = Array(msg.payload.numberOfSpecialValues);
