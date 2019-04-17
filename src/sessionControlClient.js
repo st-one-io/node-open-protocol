@@ -269,6 +269,7 @@ class SessionControlClient extends EventEmitter {
         let revision = 0;
 
         let sendMidOne = () => {
+            debug("SessionControlClient sendMidOne");
 
             if (this.defaultRevisions["1"] === undefined) {
 
