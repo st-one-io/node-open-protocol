@@ -67,9 +67,7 @@ class OpenProtocolParser extends Transform {
         while (ptr < chunk.length) {
 
             let obj = {};
-            if (this.rawData) {
-                obj._raw = chunk;
-            }
+            let startPtr = ptr;
 
             let length = chunk.toString(encodingOP, ptr, ptr + 4);
 
@@ -245,6 +243,10 @@ class OpenProtocolParser extends Transform {
             obj.payload = chunk.slice(ptr, (ptr + length - 20));
 
             ptr += (length - 20) + 1;
+
+            if (this.rawData) {
+                obj._raw = chunk.slice(startPtr, ptr);
+            }
 
             this.push(obj);
         }
