@@ -16,9 +16,8 @@
 "use strict";
 /*jshint esversion: 6, node: true*/
 
-const {
-    Duplex
-} = require("stream");
+const util = require('util');
+const { Duplex } = require("stream");
 
 const OpenProtocolParser = require("./openProtocolParser");
 const OpenProtocolSerializer = require("./openProtocolSerializer");

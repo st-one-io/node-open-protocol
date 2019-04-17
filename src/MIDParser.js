@@ -16,9 +16,8 @@
 "use strict";
 /*jshint esversion: 6, node: true*/
 
-const {
-    Transform
-} = require('stream');
+const util = require('util');
+const { Transform } = require('stream');
 
 const helpers = require("./helpers.js");
 const mids = helpers.getMids();

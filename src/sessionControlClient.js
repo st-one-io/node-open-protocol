@@ -16,6 +16,8 @@
 "use strict";
 /*jshint esversion: 6, node: true*/
 
+const util = require('util');
+
 const EventEmitter = require('events');
 const LinkLayer = require('../src/linkLayer.js');
 const helpers = require("./helpers.js");

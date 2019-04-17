@@ -17,9 +17,7 @@
 /*jshint esversion: 6, node: true*/
 
 const util = require('util');
-const {
-    Transform
-} = require('stream');
+const { Transform } = require('stream');
 
 const constants = require("./constants.json");
 
