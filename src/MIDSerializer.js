@@ -23,7 +23,7 @@ const {
 const helpers = require("./helpers.js");
 const mids = helpers.getMids();
 
-var debug = util.debuglog('[OpenProtocol] MIDSerializer');
+var debug = util.debuglog('open-protocol');
 
 class MIDSerializer extends Transform {
 

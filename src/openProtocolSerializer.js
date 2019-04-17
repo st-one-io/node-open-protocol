@@ -27,7 +27,7 @@ const encodingOP = constants.defaultEncoder;
 const helpers = require("./helpers.js");
 const pad = helpers.padLeft;
 
-var debug = util.debuglog('[OpenProtocol] OpenProtocolSerializer');
+var debug = util.debuglog('open-protocol');
 
 /**
  * @class

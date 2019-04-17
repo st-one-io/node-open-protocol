@@ -26,7 +26,7 @@ const MIDParser = require("./MIDParser");
 const MIDSerializer = require("./MIDSerializer");
 const constants = require("./constants.json");
 
-var debug = util.debuglog('[OpenProtocol] LinkLayer');
+var debug = util.debuglog('open-protocol');
 
 const POSITIVE_ACK = 9997;
 const NEGATIVE_ACK = 9998;

@@ -26,7 +26,7 @@ const mids = helpers.getMids();
 const constants = require("./constants.json");
 const encodingOP = constants.defaultEncoder;
 
-var debug = util.debuglog('[OpenProtocol] MIDParser');
+var debug = util.debuglog('open-protocol');
 
 class MIDParser extends Transform {
 

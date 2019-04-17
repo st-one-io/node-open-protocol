@@ -28,7 +28,7 @@ const midReply = require("./midReply.json");
 
 const mids = helpers.getMids();
 
-var debug = util.debuglog('[OpenProtocol] SessionControlClient');
+var debug = util.debuglog('open-protocol');
 
 const SUBSCRIBE = "subscribe";
 const COMMAND = "command";
