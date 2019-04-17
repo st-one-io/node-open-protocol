@@ -16,9 +16,8 @@
 "use strict";
 /*jshint esversion: 6, node: true*/
 
-const {
-    Transform
-} = require('stream');
+const util = require('util');
+const { Transform } = require('stream');
 
 const helpers = require("./helpers.js");
 const mids = helpers.getMids();
@@ -26,6 +25,7 @@ const mids = helpers.getMids();
 const constants = require("./constants.json");
 const encodingOP = constants.defaultEncoder;
 
+var debug = util.debuglog('open-protocol');
 
 class MIDParser extends Transform {
 
@@ -38,6 +38,7 @@ class MIDParser extends Transform {
      * @param opts parameters to Transform stream
      */
     constructor(opts) {
+        debug("new MIDParser");
 
         opts = opts || {};
 
@@ -48,6 +49,7 @@ class MIDParser extends Transform {
     }
 
     _transform(chunk, encoding, cb) {
+        debug("new MIDParser _transform", chunk);
 
         if(mids[chunk.mid]){
 
@@ -55,6 +57,7 @@ class MIDParser extends Transform {
                 
                 if(err){
                     cb(new Error(`Error on parser [${err}]`));
+                    debug("new MIDParser _transform err-parser", chunk, err);
                     return;
                 }
 
@@ -66,6 +69,7 @@ class MIDParser extends Transform {
 
             if(!Buffer.isBuffer(chunk.payload)){
                 cb(new Error(`Error on parser - invalid payload MID [${chunk.mid}]`));
+                debug("new MIDParser _transform err-invalid_payload_MID", chunk);
                 return;
             }
 

@@ -31,7 +31,7 @@ function createStreamHelper(cbWrite) {
 
         },
         write(chunk, encoding, cb) {
-            cbWrite(chunk);
+            process.nextTick(() => cbWrite(chunk));
             cb();
         }
     });
@@ -547,10 +547,6 @@ describe("Session Control Client", () => {
                     stream.push(Buffer.from("00256535001000000000TESTE\u0000"));
                     break;
 
-                case 2:
-                    step++;
-                    stream.push(Buffer.from("0022003900100000000055\u0000"));
-                    break;
             }
         });
 
@@ -558,20 +554,16 @@ describe("Session Control Client", () => {
             stream: stream
         });
 
-        sessionControlClient.on("data", (data) => {
-            if (step === 3) {
-                expect(data.mid).to.be.equal(39);
+        sessionControlClient.on("connect", (data) => {
+
+            // we listen to "data" only after connect, the first
+            // one will be the connection message itself
+            sessionControlClient.on("data", (data) => {
+                expect(data.mid).to.be.equal(6535);
                 sessionControlClient.close();
                 done();
-            }
+            });
 
-            if (step === 2) {
-                step++;
-                stream.push(Buffer.from("0022003900100000000055\u0000"));
-            }
-        });
-
-        sessionControlClient.on("connect", (data) => {
             sessionControlClient.sendMid(1212);
         });
 
@@ -949,6 +941,54 @@ describe("Session Control Client", () => {
                 sessionControlClient.close();
                 done();
             }
+        });
+
+        sessionControlClient.connect();
+    });
+
+    it("Should event data using sendMID() [MID 0080] - Test 05/02/2019", (done) => {
+
+        let step = 0;
+
+        let stream = createStreamHelper((data) => {
+
+            switch (step) {
+                case 0:
+                    step++;
+                    stream.push(Buffer.from("00570002001000000000010001020103Airbag1                  \u0000"));
+                    break;
+
+                case 1:
+                    step++;
+                    stream.push(Buffer.from("003900810010000000002019-02-05:11:22:33\u0000"));
+                    break;
+
+            }
+        });
+
+        let sessionControlClient = new SessionControlClient({
+            stream: stream
+        });
+
+
+        sessionControlClient.on("error", (error) => {
+            console.log(" Receiver Error", error);
+            throw error;
+        });
+
+        sessionControlClient.on("connect", (data) => {
+
+            // listen to data only after connection, the 
+            // first message will be the connection message itself
+            sessionControlClient.on("data", (data) => {
+                expect(data.mid).to.be.deep.equal(81);
+                sessionControlClient.close();
+                done();
+            });
+
+            sessionControlClient.sendMid(80, {
+                revision: 1
+            });
         });
 
         sessionControlClient.connect();

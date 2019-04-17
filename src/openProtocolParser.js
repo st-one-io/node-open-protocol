@@ -17,15 +17,13 @@
 /*jshint esversion: 6, node: true*/
 
 const util = require('util');
-const {
-    Transform
-} = require('stream');
+const { Transform } = require('stream');
 
 const constants = require("./constants.json");
 
 const encodingOP = constants.defaultEncoder;
 
-var debug = util.debuglog('openProtocol');
+var debug = util.debuglog('open-protocol');
 
 class OpenProtocolParser extends Transform {
 
@@ -48,8 +46,7 @@ class OpenProtocolParser extends Transform {
     }
 
     _transform(chunk, encoding, cb) {
-
-        debug("OpenProtocolParser _transform");
+        debug("OpenProtocolParser _transform", chunk);
 
         let ptr = 0;
 
