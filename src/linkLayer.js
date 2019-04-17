@@ -57,7 +57,9 @@ class LinkLayer extends Duplex {
         }
 
         //Create instances of manipulators
-        this.opParser = new OpenProtocolParser();
+        this.opParser = new OpenProtocolParser({
+            rawData: opts.rawData
+        });
         this.opSerializer = new OpenProtocolSerializer();
         this.midParser = new MIDParser();
         this.midSerializer = new MIDSerializer();
@@ -189,15 +191,10 @@ class LinkLayer extends Duplex {
     }
 
     _onDataStream(data) {
-        if (this.rawData) {
-            this.dataRaw = Buffer.from(data);
-        }
-
         this.opParser.write(data);
     }
 
     _onDataOpParser(data) {
-
         let duplicateMsg = false;
 
         if (this.linkLayerActive) {
@@ -236,10 +233,6 @@ class LinkLayer extends Duplex {
                 if (!duplicateMsg) {
 
                     if (this.disableMidParsing[data.mid] && (data.mid !== POSITIVE_ACK && data.mid !== NEGATIVE_ACK)) {
-
-                        if (this.rawData) {
-                            data._raw = Buffer.from(this.dataRaw);
-                        }
 
                         if (!this.push(data)) {
                             this.stream.pause();
@@ -292,9 +285,6 @@ class LinkLayer extends Duplex {
 
         if (!duplicateMsg) {
             if (this.disableMidParsing[data.mid] && (data.mid !== POSITIVE_ACK && data.mid !== NEGATIVE_ACK)) {
-                if (this.rawData) {
-                    data._raw = Buffer.from(this.dataRaw);
-                }
 
                 if (!this.push(data)) {
                     this.stream.pause();
@@ -314,10 +304,6 @@ class LinkLayer extends Duplex {
         if (data.mid === POSITIVE_ACK || data.mid === NEGATIVE_ACK) {
             this._receiverLinkLayer(data);
             return;
-        }
-
-        if (this.rawData) {
-            data._raw = Buffer.from(this.dataRaw);
         }
 
         if (!this.push(data)) {

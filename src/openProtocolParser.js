@@ -42,6 +42,7 @@ class OpenProtocolParser extends Transform {
 
         super(opts);
 
+        this.rawData = opts.rawData || false;
         this._nBuffer = null;
         debug("new OpenProtocolParser");
     }
@@ -66,16 +67,17 @@ class OpenProtocolParser extends Transform {
         while (ptr < chunk.length) {
 
             let obj = {};
+            let startPtr = ptr;
 
             let length = chunk.toString(encodingOP, ptr, ptr + 4);
 
             length = Number(length);
 
             if (isNaN(length) || length < 1 || length > 9999) {
-                
+
                 let e = new Error(`Invalid length [${length}]`);
-                e.errno = constants.ERROR_LINKLAYER.INVALID_LENGTH;                             
-               
+                e.errno = constants.ERROR_LINKLAYER.INVALID_LENGTH;
+
                 cb(e);
 
                 debug("OpenProtocolParser _transform err-length:", ptr, chunk);
@@ -90,7 +92,7 @@ class OpenProtocolParser extends Transform {
 
             if (chunk[ptr + length] !== 0) {
                 let e = new Error(`Invalid message [${chunk.toString()}]`);
-                e.errno = constants.ERROR_LINKLAYER.INVALID_LENGTH;                            
+                e.errno = constants.ERROR_LINKLAYER.INVALID_LENGTH;
                 cb(e);
                 debug("OpenProtocolParser _transform err-message:", ptr, chunk);
                 return;
@@ -119,7 +121,7 @@ class OpenProtocolParser extends Transform {
 
             if (isNaN(obj.revision) || obj.revision < 0 || obj.revision > 999) {
                 let e = new Error(`Invalid revision [${revision}]`);
-                e.errno = constants.ERROR_LINKLAYER.INVALID_REVISION;   
+                e.errno = constants.ERROR_LINKLAYER.INVALID_REVISION;
                 e.obj = obj;
                 cb(e);
                 debug("OpenProtocolParser _transform err-revision:", ptr, chunk);
@@ -241,6 +243,10 @@ class OpenProtocolParser extends Transform {
             obj.payload = chunk.slice(ptr, (ptr + length - 20));
 
             ptr += (length - 20) + 1;
+
+            if (this.rawData) {
+                obj._raw = chunk.slice(startPtr, ptr);
+            }
 
             this.push(obj);
         }
