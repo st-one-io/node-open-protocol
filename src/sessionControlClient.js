@@ -179,7 +179,7 @@ class SessionControlClient extends EventEmitter {
         this.defaultRevisions = opts.defaultRevisions || {};
 
         //LinkLayer
-        //If true activate Link Layer 
+        //If true activate Link Layer
         //If false not activate Link Layer
         //If undefined autoNegotiation Link Layer
         this.useLinkLayer = opts.linkLayerActivate;
@@ -506,7 +506,7 @@ class SessionControlClient extends EventEmitter {
      * });
      *
      * sessionControlClient.sendMid(1, opts, (err) => {
-     *  
+     *
      *  if (err) {
      *      console.log("an error has occurred", err);
      *      return;
@@ -1002,7 +1002,7 @@ class SessionControlClient extends EventEmitter {
 
                 let errorCode = data.payload.errorCode;
 
-                //Error 74: Subscribed MID Revision unsupported 
+                //Error 74: Subscribed MID Revision unsupported
                 //Error 76: Requested MID Revision unsupported
                 if (errorCode === 74 || errorCode === 76) {
                     this.changeRevision = true;
@@ -1057,9 +1057,9 @@ class SessionControlClient extends EventEmitter {
             this.ll.finishCycle();
 
             if (!this.useLinkLayer) {
-
                 this.ll.write({
-                    mid: midGroupList[dataGroup].ack
+                    mid: midGroupList[dataGroup].ack,
+                    isAck: true
                 });
 
                 return;
