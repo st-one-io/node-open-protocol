@@ -47,7 +47,6 @@ class LinkLayer extends Duplex {
      * @param {boolean} opts.disableMidParsing
      */
     constructor(opts) {
-
         debug("new LinkLayer", opts);
 
         opts = opts || {};
@@ -113,7 +112,6 @@ class LinkLayer extends Duplex {
     }
 
     _onErrorSerializer(err) {
-
         debug("LinkLayer _onErrorSerializer", err);
 
         if (this.linkLayerActive) {
@@ -142,7 +140,6 @@ class LinkLayer extends Duplex {
     }
 
     _onDataMidSerializer(data) {
-
         debug("LinkLayer _onDataMidSerializer", data);
 
         if (data.mid !== NEGATIVE_ACK && data.mid !== POSITIVE_ACK) {
@@ -211,7 +208,6 @@ class LinkLayer extends Duplex {
     }
 
     _onDataOpParser(data) {
-
         debug("LinkLayer _onDataOpParser", data);
 
         let duplicateMsg = false;
@@ -327,7 +323,6 @@ class LinkLayer extends Duplex {
     }
 
     _onDataMidParser(data) {
-
         debug("LinkLayer _onDataMidParser", data);
 
         clearTimeout(this.timer);
@@ -348,7 +343,6 @@ class LinkLayer extends Duplex {
     }
 
     _write(msg, encoding, callback) {
-
         debug("LinkLayer _write", msg);
 
         this.callbackWrite = callback;
@@ -367,7 +361,6 @@ class LinkLayer extends Duplex {
     }
 
     _read(size) {
-
         debug("LinkLayer _read", size);
 
         if (this.stream.isPaused()) {
@@ -376,7 +369,6 @@ class LinkLayer extends Duplex {
     }
 
     _destroy() {
-
         debug("LinkLayer _destroy");
 
         clearTimeout(this.timer);
@@ -387,7 +379,6 @@ class LinkLayer extends Duplex {
     }
 
     finishCycle(err) {
-
         debug("LinkLayer finishCycle", err);
 
         if (this.callbackWrite) {
@@ -400,7 +391,6 @@ class LinkLayer extends Duplex {
      * Enable LinkLayer
      */
     activateLinkLayer() {
-
         debug("LinkLayer activateLinkLayer");
 
         this.linkLayerActive = true;
@@ -411,7 +401,6 @@ class LinkLayer extends Duplex {
      * Disable LinkLayer
      */
     deactivateLinkLayer() {
-
         debug("LinkLayer deactivateLinkLayer");
 
         this.linkLayerActive = false;
@@ -423,7 +412,6 @@ class LinkLayer extends Duplex {
      * @param {*} data
      */
     _receiverLinkLayer(data) {
-
         debug("LinkLayer _receiverLinkLayer", data);
 
         clearTimeout(this.timer);
@@ -472,7 +460,6 @@ class LinkLayer extends Duplex {
      * @param {*} payload
      */
     _sendLinkLayer(mid, sequenceNumber, payload) {
-
         debug("LinkLayer _sendLinkLayer", mid, sequenceNumber, payload);
 
         if (sequenceNumber === 99) {
@@ -492,7 +479,6 @@ class LinkLayer extends Duplex {
      * @private
      */
     _resendMid() {
-
         debug("LinkLayer _resendMid");
 
         clearTimeout(this.timer);

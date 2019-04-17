@@ -42,9 +42,7 @@ const CONN_CONNECTING = 1;
 const CONN_CONNECTED = 2;
 
 function promisify(ref, method, mid, opts) {
-
     return new Promise(function (resolve, reject) {
-
         return ref[method](mid, opts, (err, data) => {
             if (err) {
                 reject(err);
@@ -56,7 +54,6 @@ function promisify(ref, method, mid, opts) {
 }
 
 function maybePromisify(ref, method, mid, opts, cb) {
-
     if (cb === undefined) {
         if (typeof opts === "function") {
             cb = opts;
@@ -169,7 +166,6 @@ class SessionControlClient extends EventEmitter {
      *
      */
     constructor(opts) {
-
         debug("new SessionControlClient");
 
         super();
@@ -256,7 +252,6 @@ class SessionControlClient extends EventEmitter {
      * @param {function} cb function of callback
      */
     connect(cb) {
-
         debug("SessionControlClient connect");
 
         let midSend = {};
@@ -305,7 +300,6 @@ class SessionControlClient extends EventEmitter {
         };
 
         let receivedReply = (data) => {
-
             debug("SessionControlClient receivedReply", data);
 
             this.ll.finishCycle();
@@ -424,7 +418,6 @@ class SessionControlClient extends EventEmitter {
      * @param {Error} [err]
      */
     close(err) {
-
         debug("SessionControlClient close", err);
 
         if (this.onClose) {
@@ -539,7 +532,6 @@ class SessionControlClient extends EventEmitter {
      * @param {*} cb
      */
     _sendMid(midNumber, opts, cb) {
-
         debug("SessionControlClient _sendMid", midNumber, opts);
 
         let mid = opts || {};
@@ -572,7 +564,6 @@ class SessionControlClient extends EventEmitter {
      * @param {*} cb
      */
     _request(midGroup, opts, cb) {
-
         debug("SessionControlClient _request", midGroup, opts);
 
         if (midRequest[midGroup] === undefined) {
@@ -634,7 +625,6 @@ class SessionControlClient extends EventEmitter {
      * @param {*} cb
      */
     _command(midGroup, opts, cb) {
-
         debug("SessionControlClient _command", midGroup, opts);
 
         if (midCommand[midGroup] === undefined) {
@@ -691,7 +681,6 @@ class SessionControlClient extends EventEmitter {
      * @param {*} cb
      */
     _subscribe(midGroup, opts, cb) {
-
         debug("SessionControlClient _subscribe", midGroup, opts);
 
         if (midGroupList[midGroup] === undefined) {
@@ -752,7 +741,6 @@ class SessionControlClient extends EventEmitter {
      * @param {*} cb
      */
     _unsubscribe(midGroup, opts, cb) {
-
         debug("SessionControlClient _unsubscribe", midGroup, opts);
 
         if (midGroupList[midGroup] === undefined) {
@@ -805,7 +793,6 @@ class SessionControlClient extends EventEmitter {
      * @private
      */
     _sendingProcess() {
-
         debug("SessionControlClient _sendingProcess");
 
         if (this.onClose) {
@@ -834,7 +821,6 @@ class SessionControlClient extends EventEmitter {
      * @private
      */
     _transmitMid() {
-
         debug("SessionControlClient _transmitMid", this.midInProcess);
 
         if (!this.changeRevision) {
@@ -868,7 +854,6 @@ class SessionControlClient extends EventEmitter {
      * @param {*} local
      */
     _calcRevision(mid, type, group, local) {
-
         debug("SessionControlClient _calcRevision", mid, type, group, local);
 
         let revision = 0;
@@ -972,7 +957,6 @@ class SessionControlClient extends EventEmitter {
      * @private
      */
     _sendKeepAlive() {
-
         debug('SessionControlClient _sendKeepAlive');
 
         if (this.onClose) {
@@ -997,7 +981,6 @@ class SessionControlClient extends EventEmitter {
      * @param {*} data
      */
     _onDataLinkLayer(data) {
-
         debug('SessionControlClient _onDataLinkLayer');
 
         // Call callback of Link Layer
@@ -1008,7 +991,6 @@ class SessionControlClient extends EventEmitter {
     }
 
     _receiverData(data) {
-
         debug('SessionControlClient _receiverData', data);
 
         this.emit("data", data);
@@ -1129,7 +1111,6 @@ class SessionControlClient extends EventEmitter {
      * @param {*} err
      */
     _onErrorSerializer(err) {
-
         debug('SessionControlClient _onErrorSerializer', err);
 
         if (this.midInProcess) {
@@ -1146,7 +1127,6 @@ class SessionControlClient extends EventEmitter {
 class Message {
 
     constructor(mid, callback, type, group) {
-
         debug('SessionControlClient new Message');
 
         this._mid = mid;

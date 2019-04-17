@@ -60,7 +60,6 @@ class OpenProtocolSerializer extends Transform {
     }
 
     _transform(chunk, encoding, cb) {
-
         debug("openProtocolSerializer _transform", chunk);
 
         chunk.mid = Number(chunk.mid);
@@ -154,31 +153,19 @@ class OpenProtocolSerializer extends Transform {
         }
 
         let sizePayload = chunk.payload.length;
-
         let sizeMessage = 21 + sizePayload;
-
         let buf = Buffer.alloc(sizeMessage);
 
         buf.write(pad(sizeMessage - 1, 4), 0, 4, encodingOP);
-
         buf.write(pad(chunk.mid, 4), 4, 4, encodingOP);
-
         buf.write(pad(chunk.revision, 3), 8, encodingOP);
-
-        buf.write(chunk.noAck ? '1':'0', 11, encodingOP);
-
+        buf.write(chunk.noAck ? '1' : '0', 11, encodingOP);
         buf.write(pad(chunk.stationID, 2), 12, encodingOP);
-
         buf.write(pad(chunk.spindleID, 2), 14, encodingOP);
-
         buf.write(pad(chunk.sequenceNumber, 2), 16, encodingOP);
-
         buf.write(pad(chunk.messageParts, 1), 18, encodingOP);
-
         buf.write(pad(chunk.messageNumber, 1), 19, encodingOP);
-
         buf.write(chunk.payload.toString(encodingOP), 20, encodingOP);
-
         buf.write("\u0000", sizeMessage, encodingOP);
 
         debug("openProtocolSerializer _transform publish", buf);

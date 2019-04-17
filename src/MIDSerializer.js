@@ -45,7 +45,6 @@ class MIDSerializer extends Transform {
     }
 
     _transform(chunk, encoding, cb) {
-
         debug("MIDSerializer _transform", chunk);
 
         if(mids[chunk.mid]){
