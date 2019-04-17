@@ -306,6 +306,8 @@ class SessionControlClient extends EventEmitter {
 
         let receivedReply = (data) => {
 
+            debug("SessionControlClient receivedReply", data);
+
             this.ll.finishCycle();
 
             if (data.mid === 4) {
@@ -325,7 +327,7 @@ class SessionControlClient extends EventEmitter {
                 } else {
                     let errorCode = helpers.padLeft(data.payload.errorCode, 2);
                     let e = new Error(`[Session Control Client] [Connect] negative acknowledge, MID[${data.payload.midNumber}], Error [${constants.ERROR[errorCode]}]`);
-                    debug("SessionControlClient connect err_negative_acknowledge", data);
+                    debug("SessionControlClient connect err_negative_acknowledge", data.payload.errorCode, this.defaultRevisions["1"]);
                     this.emit("error", e);
                 }
 
@@ -380,7 +382,7 @@ class SessionControlClient extends EventEmitter {
                 } else if (this.useLinkLayer) {
                     if (data.payload.sequenceNumberSupport !== 1 || data.payload.linkingHandlingSupport !== 1) {
                         this.emit("error", new Error("[Session Control Client] [Force Link Layer] controller does not support link layer"));
-                        debug("SessionControlClient connect err_controller_not_support_link_layer", data);
+                        debug("SessionControlClient connect err_controller_not_support_link_layer", this.useLinkLayer, data.payload.sequenceNumberSupport, data.payload.linkingHandlingSupport);
                         return;
                     }
                     this.ll.activateLinkLayer();
@@ -884,7 +886,7 @@ class SessionControlClient extends EventEmitter {
 
                 if (this.midInProcess.baseMidRevision !== undefined || this.defaultRevisions[mid] !== undefined || this.autoRevision[mid].reference === 0) {
                     let e = new Error(`[Session Control Client] invalid revision, MID[${mid}], Revision [${this.autoRevision[mid].value}]`);
-                    debug(`SessionControlClient _calcRevision err_invalid_revision - MID[${mid}], Revision [${this.autoRevision[mid].value}]`);
+                    debug('SessionControlClient _calcRevision err_invalid_revision', this.midInProcess.baseMidRevision, this.defaultRevisions[mid], this.autoRevision[mid].reference);
                     this.midInProcess.doCallback(e, null);
                     return 0;
                 }
@@ -895,7 +897,7 @@ class SessionControlClient extends EventEmitter {
 
                 if (!this.autoRevision[mid] || this.autoRevision[mid].reference === 0) {
                     let e = new Error(`[Session Control Client] invalid generic revision, MID[${mid}], Revision [${this.autoRevision[mid].value}]`);
-                    debug(`SessionControlClient _calcRevision err_generic_revision - MID[${mid}], Revision [${this.autoRevision[mid].value}]`);
+                    debug('SessionControlClient _calcRevision err_generic_revision', mid, this.autoRevision[mid]);
                     this.midInProcess.doCallback(e, null);
                     return 0;
                 }
@@ -971,7 +973,7 @@ class SessionControlClient extends EventEmitter {
      */
     _sendKeepAlive() {
 
-        debug(`SessionControlClient _sendKeepAlive`);
+        debug('SessionControlClient _sendKeepAlive');
 
         if (this.onClose) {
             clearTimeout(this.keepAliveTimer);
@@ -983,6 +985,7 @@ class SessionControlClient extends EventEmitter {
 
         this.request("keepAlive", (err) => {
             if (err) {
+                debug('SessionControlClient _sendKeepAlive response-error', err);
                 clearTimeout(this.keepAliveTimer);
                 this.close();
             }
@@ -995,7 +998,7 @@ class SessionControlClient extends EventEmitter {
      */
     _onDataLinkLayer(data) {
 
-        debug(`SessionControlClient _onDataLinkLayer`);
+        debug('SessionControlClient _onDataLinkLayer');
 
         // Call callback of Link Layer
         this.ll.finishCycle();
@@ -1006,7 +1009,7 @@ class SessionControlClient extends EventEmitter {
 
     _receiverData(data) {
 
-        debug(`SessionControlClient _receiverData`);
+        debug('SessionControlClient _receiverData', data);
 
         this.emit("data", data);
 
@@ -1030,7 +1033,7 @@ class SessionControlClient extends EventEmitter {
             // Verify that the mid referenced in the response is equal to the mid sent.
             if (midNumber !== this.midInProcess.midNumber) {
                 let err = new Error(`[Session Control Client] invalid acknowledge, expect MID[${this.midInProcess.midNumber}], received MID[${midNumber}]`);
-                debug(`SessionControlClient _receiverData err-invalid_acknowledge - expect MID[${this.midInProcess.midNumber}], received MID[${midNumber}]`);
+                debug('SessionControlClient _receiverData err-invalid_acknowledge', midNumber, this.midInProcess.midNumber);
                 this.midInProcess.doCallback(err);
                 this.inOperation = false;
                 this._sendingProcess();
@@ -1060,7 +1063,7 @@ class SessionControlClient extends EventEmitter {
 
             let errorCode = helpers.padLeft(data.payload.errorCode, 2);
             let err = new Error(`[Session Control Client] negative acknowledge, MID[${midNumber}], Error[${constants.ERROR[errorCode]}]`);
-            debug(`SessionControlClient _receiverData err_negative_acknowledge - MID[${midNumber}], Error[${constants.ERROR[errorCode]}]`);
+            debug('SessionControlClient _receiverData err_negative_acknowledge', midNumber, errorCode);
             this.midInProcess.doCallback(err);
             this.inOperation = false;
             this._sendingProcess();
@@ -1102,7 +1105,7 @@ class SessionControlClient extends EventEmitter {
                 this.midInProcess.doCallback(null, data);
             } else {
                 let err = new Error(`[Session Control Client] invalid reply, expect MID[${this.midInProcess.group}], received [${replyGroup}]`);
-                debug(`SessionControlClient _receiverData err_invalid_reply - expect MID[${this.midInProcess.group}], received [${replyGroup}]`);
+                debug('SessionControlClient _receiverData err_invalid_reply', replyGroup, this.midInProcess.group);
                 this.midInProcess.doCallback(err);
             }
 
@@ -1117,7 +1120,7 @@ class SessionControlClient extends EventEmitter {
      * @param {*} err
      */
     _onErrorLinkLayer(err) {
-        debug(`SessionControlClient _onErrorLinkLayer`, err);
+        debug('SessionControlClient _onErrorLinkLayer', err);
         this.close(err);
     }
 
@@ -1127,7 +1130,7 @@ class SessionControlClient extends EventEmitter {
      */
     _onErrorSerializer(err) {
 
-        debug(`SessionControlClient _onErrorSerializer`, err);
+        debug('SessionControlClient _onErrorSerializer', err);
 
         if (this.midInProcess) {
             this.midInProcess.doCallback(err);
@@ -1144,7 +1147,7 @@ class Message {
 
     constructor(mid, callback, type, group) {
 
-        debug(`SessionControlClient new Message`);
+        debug('SessionControlClient new Message');
 
         this._mid = mid;
         this._callback = callback;

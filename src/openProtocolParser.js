@@ -48,7 +48,7 @@ class OpenProtocolParser extends Transform {
 
     _transform(chunk, encoding, cb) {
 
-        debug("OpenProtocolParser _transform");
+        debug("OpenProtocolParser _transform", chunk);
 
         let ptr = 0;
 

@@ -46,7 +46,7 @@ class MIDSerializer extends Transform {
 
     _transform(chunk, encoding, cb) {
 
-        debug(`MIDSerializer _transform`);
+        debug("MIDSerializer _transform", chunk);
 
         if(mids[chunk.mid]){
             
@@ -54,7 +54,7 @@ class MIDSerializer extends Transform {
                 
                 if(err){
                     cb(new Error(`Error on serializer [${err}]`));
-                    debug(`MIDSerializer _transform err-serializer`, chunk, err);
+                    debug('MIDSerializer _transform err-serializer', chunk, err);
                     return;
                 }
 
@@ -70,7 +70,7 @@ class MIDSerializer extends Transform {
 
             if(typeof chunk.payload !== "string" && !Buffer.isBuffer(chunk.payload)){
                 cb(new Error(`Error on serializer - invalid payload MID [${chunk.mid}]`));
-                debug(`MIDSerializer _transform err-invalid_payload_MID`, chunk);
+                debug('MIDSerializer _transform err-invalid_payload_MID', chunk);
                 return;
             }
 

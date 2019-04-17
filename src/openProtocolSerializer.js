@@ -61,7 +61,7 @@ class OpenProtocolSerializer extends Transform {
 
     _transform(chunk, encoding, cb) {
 
-        debug("openProtocolSerializer _transform");
+        debug("openProtocolSerializer _transform", chunk);
 
         chunk.mid = Number(chunk.mid);
 

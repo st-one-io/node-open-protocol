@@ -52,7 +52,7 @@ class MIDParser extends Transform {
 
     _transform(chunk, encoding, cb) {
 
-        debug("new MIDParser _transform");
+        debug("new MIDParser _transform", chunk);
 
         if(mids[chunk.mid]){
 
