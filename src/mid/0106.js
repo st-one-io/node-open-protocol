@@ -121,6 +121,9 @@ function parser(msg, opts, cb) {
             }
 
             break;
+        default:
+            cb(new Error(`[Parser MID${msg.mid}] invalid revision [${msg.revision}]`));
+            return;
     }
 
     if (status) {
