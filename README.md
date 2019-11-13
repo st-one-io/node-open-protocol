@@ -93,7 +93,7 @@ let options = {
 let controllerIp = "127.0.0.1";
 let controllerPort = 4545;
 
-let op = openProtocol.createClient(controllerIp, controllerPort, options, (data) => {
+let op = openProtocol.createClient(controllerPort, controllerIp , options, (data) => {
     console.log("Connected");
     console.log("MID 0002", data);
 });
