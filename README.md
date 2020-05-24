@@ -1,6 +1,6 @@
 # Node Open Protocol
 
-This node is an implementation of the Atlas Copco's Open Protocol.
+A library to interface with Power Tools using the Atlas Copco Open Protocol
  
 This node was created by [Smart-Tech](https://netsmarttech.com) as part of the [ST-One](https://netsmarttech.com/page/st-one) project.
 
@@ -374,9 +374,9 @@ let op = openProtocol.createClient(4545, "127.0.0.1", data => {
 The marked controllers have been tested to some degree, so we can assure basic communication support.
 
 - [x] Atlas Copco PowerFocus4000
-- [ ] Atlas Copco PowerFocus6000
-- [ ] Atlas Copco PowerMacs
-- [ ] Stanley Alpha 4
+- [x] Atlas Copco PowerFocus6000
+- [x] Atlas Copco PowerMacs
+- [x] Stanley Alpha 4
 
 Please contact us by sending an e-mail to netsmarttech@netsmarttech.com if you'd like to have your controller tested and 
 validated by us and to appear on this list.

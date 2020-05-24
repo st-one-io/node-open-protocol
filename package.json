@@ -1,7 +1,7 @@
 {
   "name": "node-open-protocol",
   "version": "1.1.0",
-  "description": "Node of Open Protocol",
+  "description": "A library to interface with Power Tools using the Atlas Copco Open Protocol",
   "main": "index.js",
   "directories": {
     "doc": "doc"
@@ -15,10 +15,18 @@
     "url": "https://github.com/netsmarttech/node-open-protocol"
   },
   "keywords": [
-    "atlas-copco",
-    "open-protocol",
+    "hardware",
+    "ethernet",
+    "industrial",
     "communication",
-    "controller"
+    "controller",
+    "atlas-copco",
+    "power-focus",
+    "power-macs",
+    "stanley",
+    "desoutter",
+    "cleco",
+    "estic"
   ],
   "author": "SmartTech",
   "license": "GPL-3.0-or-later",
