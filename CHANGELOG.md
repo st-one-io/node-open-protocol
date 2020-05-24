@@ -1,5 +1,8 @@
 ## Changelog
 
+#### v1.1.1
+ - Switches to GPL v3 licensing model
+ 
 
 #### v1.1.0
  - Fix internal handling of calls of `customMid()` (#6)
