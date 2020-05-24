@@ -37,7 +37,7 @@ At a minimum, please include:
 Please ensure you follow the coding standards used through-out the existing
 code base. Some basic rules include:
 
- - all files must have the Apache license in the header.
+ - all files must have the GPL-3.0-or-later in the header.
  - indent with 4-spaces, no tabs. No arguments.
  - opening brace on same line as `if`/`for`/`function` and so on, closing brace
  on its own line.

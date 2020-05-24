@@ -395,5 +395,6 @@ trademarks of Atlas Copco AB.
 For contributing see instructions in [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## License
+Copyright: (c) 2018-2020, Smart-Tech
 
-Copyright 2018 Smart-Tech, [Apache 2.0 license](LICENSE).
+GNU General Public License v3.0+ (see [LICENSE](LICENSE) or https://www.gnu.org/licenses/gpl-3.0.txt)
