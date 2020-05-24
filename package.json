@@ -23,9 +23,9 @@
   "author": "SmartTech",
   "license": "Apache-2.0",
   "devDependencies": {
-    "chai": "^4.1.2",
-    "jsdoc": "^3.5.5",
-    "mocha": "^5.2.0",
-    "nyc": "^13.3.0"
+    "chai": "^4.2.0",
+    "jsdoc": "^3.6.4",
+    "mocha": "^7.2.0",
+    "nyc": "^15.0.1"
   }
 }
