@@ -146,11 +146,18 @@ class OpenProtocolSerializer extends Transform {
         buf.write(pad(chunk.mid, 4), 4, 4, encodingOP);
         buf.write(pad(chunk.revision, 3), 8, encodingOP);
         buf.write(chunk.noAck ? '1' : '0', 11, encodingOP);
+        /*
+        Desoutter controllers did not like the version number.
+        Sending blank characters for this header option got it to work
+        */
+        buf.write('        ', 12, encodingOP);
+        /*
         buf.write(pad(chunk.stationID, 2), 12, encodingOP);
         buf.write(pad(chunk.spindleID, 2), 14, encodingOP);
         buf.write(pad(chunk.sequenceNumber, 2), 16, encodingOP);
         buf.write(pad(chunk.messageParts, 1), 18, encodingOP);
         buf.write(pad(chunk.messageNumber, 1), 19, encodingOP);
+        */
         buf.write(chunk.payload.toString(encodingOP), 20, encodingOP);
         buf.write("\u0000", sizeMessage, encodingOP);
 
