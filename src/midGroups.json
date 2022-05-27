@@ -3,6 +3,8 @@
         "data": 15,
         "subscribe": 14,
         "unsubscribe": 17,
+        "errSubExist": 13,
+        "errNoSub": 14,
         "ack": 16,
         "generic": true
     },
@@ -10,6 +12,8 @@
         "data": 22,
         "subscribe": 21,
         "unsubscribe": 24,
+        "errSubExist": 88,
+        "errNoSub": 89,
         "ack": 23,
         "generic": true
     },
@@ -17,6 +21,8 @@
         "data": 35,
         "subscribe": 34,
         "unsubscribe": 37,
+        "errSubExist": 18,
+        "errNoSub": 19,
         "ack": 36,
         "generic": true
     },
@@ -24,12 +30,16 @@
         "data": 52,
         "subscribe": 51,
         "unsubscribe": 54,
+        "errSubExist": 6,
+        "errNoSub": 7,
         "ack": 53,
         "generic": true
     },
     "lastTightening": {
         "data": 61,
         "subscribe": 60,
+        "errSubExist": 9,
+        "errNoSub": 10,
         "unsubscribe": 63,
         "ack": 62,
         "generic": true
@@ -38,6 +48,8 @@
         "data": 71,
         "subscribe": 70,
         "unsubscribe": 73,
+        "errSubExist": 11,
+        "errNoSub": 12,
         "ack": 72,
         "generic": true
     },
@@ -55,6 +67,8 @@
         "data": 91,
         "subscribe": 90,
         "unsubscribe": 93,
+        "errSubExist": 31,
+        "errNoSub": 32,
         "ack": 92,
         "generic": true
     },
@@ -62,6 +76,8 @@
         "data": 101,
         "subscribe": 100,
         "unsubscribe": 103,
+        "errSubExist": 33,
+        "errNoSub": 34,
         "ack": 102,
         "generic": true
     },    
@@ -76,6 +92,8 @@
         "data": 121,
         "subscribe": 120,
         "unsubscribe": 126,
+        "errSubExist": 40,
+        "errNoSub": 41,
         "ack": 125,
         "generic": true
     },
@@ -83,6 +101,8 @@
         "data": 152,
         "subscribe": 151,
         "unsubscribe": 154,
+        "errSubExist": 43,
+        "errNoSub": 44,
         "ack": 153,
         "generic": true
     },
@@ -90,6 +110,8 @@
         "data": 211,
         "subscribe": 210,
         "unsubscribe": 213,
+        "errSubExist": 50,
+        "errNoSub": 51,
         "ack": 212,
         "generic": true
     },
@@ -97,6 +119,8 @@
         "data": 217,
         "subscribe": 216,
         "unsubscribe": 219,
+        "errSubExist": 84,
+        "errNoSub": 85,
         "ack": 218,
         "generic": true
     },
@@ -104,6 +128,8 @@
         "data": 221,
         "subscribe": 220,
         "unsubscribe": 223,
+        "errSubExist": 88,
+        "errNoSub": 89,
         "ack": 222,
         "generic": true
     },
@@ -118,6 +144,8 @@
         "data": 251,
         "subscribe": 250,
         "unsubscribe": 253,
+        "errSubExist": 86,
+        "errNoSub": 87,
         "ack": 252,
         "generic": true
     },
@@ -125,6 +153,8 @@
         "data": 262,
         "subscribe": 261,
         "unsubscribe": 264,
+        "errSubExist": 55,
+        "errNoSub": 56,
         "ack": 263,
         "generic": true
     },
@@ -132,6 +162,8 @@
         "data": 401,
         "subscribe": 400,
         "unsubscribe": 403,
+        "errSubExist": 82,
+        "errNoSub": 83,
         "ack": 402,
         "generic": true
     },
@@ -139,6 +171,8 @@
         "data": 421,
         "subscribe": 420,
         "unsubscribe": 423,
+        "errSubExist": 93,
+        "errNoSub": 94,
         "ack": 422,
         "generic": true
     },
