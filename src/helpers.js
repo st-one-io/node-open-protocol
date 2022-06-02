@@ -6,7 +6,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const codes = require('./constants.json');
+const codes = require('./constants');
 const encoding = codes.defaultEncoder;
 
 let midList;

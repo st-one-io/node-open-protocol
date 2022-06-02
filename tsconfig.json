@@ -101,5 +101,12 @@
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
   "include": [
+    "src/constants.js",
+    "src/midCommand.js",
+    "src/midData.js",
+    "src/midGroups.js",
+    "src/midReply.js",
+    "src/midRequest.js",
+    "src/mid/MidConstants/MID0061.js"
   ]
 }

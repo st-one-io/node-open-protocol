@@ -1,4 +1,4 @@
-{
+module.exports = /** @type {const} */ ({
     "communicationStop":{
         "request": 3
     },
@@ -132,4 +132,4 @@
     "selectMode": {
         "request": 2606
     }
-}
+});

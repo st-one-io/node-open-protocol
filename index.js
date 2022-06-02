@@ -11,9 +11,9 @@ const MIDSerializer = require("./src/MIDSerializer.js");
 const helpers = require("./src/helpers.js");
 const SessionControlClient = require("./src/sessionControlClient.js");
 
-const midGroups = require("./src/midGroups.json");
-const midCommand = require("./src/midCommand.json");
-const midrequest = require("./src/midRequest.json");
+const midGroups = require("./src/midGroups");
+const midCommand = require("./src/midCommand");
+const midrequest = require("./src/midRequest");
 
 const net = require("net");
 

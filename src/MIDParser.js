@@ -10,7 +10,7 @@ const { Transform } = require('stream');
 const helpers = require("./helpers.js");
 const mids = helpers.getMids();
 
-const constants = require("./constants.json");
+const constants = require("./constants");
 const encodingOP = constants.defaultEncoder;
 
 var debug = util.debuglog('open-protocol');

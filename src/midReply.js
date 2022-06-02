@@ -1,4 +1,4 @@
-{
+module.exports = /** @type {const} */ ({
     "11": "psetID",
     "13": "psetData",
     "2601": "modeIdUpload",
@@ -17,4 +17,4 @@
     "108": "lastPowerMACSTighteningResultBoltData",
     "48": "toolPairingHandling",
     "9999": "keepAlive"
-}
+});
