@@ -1,4 +1,4 @@
-{
+module.exports = /** @type {const} */ ({
     "PID": {
         "00001": "Tightening Status",
         "00002": "Station ID",
@@ -435,4 +435,4 @@
         "INCONSISTENCY_MESSAGE_NUMBER": 4
     },
     "defaultEncoder" : "ascii"
-}
+});

@@ -7,7 +7,7 @@
 const util = require('util');
 const { Transform } = require('stream');
 
-const constants = require("./constants.json");
+const constants = require("./constants");
 const encodingOP = constants.defaultEncoder;
 
 const helpers = require("./helpers.js");

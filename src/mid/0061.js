@@ -129,7 +129,7 @@ const processKey = helpers.processKey;
 const serializerField = helpers.serializerField;
 const serializerKey = helpers.serializerKey;
 
-const constantsMID = require("./MidConstants/MID0061.json");
+const constantsMID = require("./MidConstants/MID0061");
 
 function parser(msg, opts, cb) {
 

@@ -1,4 +1,4 @@
-{
+module.exports = /** @type {const} */ ({
     "psetID": {
         "request": 10,
         "reply": 11,
@@ -69,4 +69,4 @@
         "reply": 9999,
         "generic": false
     }
-}
+});

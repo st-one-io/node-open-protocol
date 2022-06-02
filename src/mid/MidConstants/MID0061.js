@@ -1,4 +1,4 @@
-{
+module.exports = /** @type {const} */ ({
     "strategy": {
         "1": "Torque control",
         "2": "Torque control / angle monitoring",
@@ -183,4 +183,4 @@
         "PVT comp with Snug": 26,
         "No strategy": 99
     }
-}
+});

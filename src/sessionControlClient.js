@@ -9,12 +9,12 @@ const util = require('util');
 const EventEmitter = require('events');
 const LinkLayer = require('../src/linkLayer.js');
 const helpers = require("./helpers.js");
-const midGroupList = require("./midGroups.json");
-const midData = require("./midData.json");
-const constants = require("./constants.json");
-const midRequest = require("./midRequest.json");
-const midCommand = require("./midCommand.json");
-const midReply = require("./midReply.json");
+const midGroupList = require("./midGroups");
+const midData = require("./midData");
+const constants = require("./constants");
+const midRequest = require("./midRequest");
+const midCommand = require("./midCommand");
+const midReply = require("./midReply");
 
 const mids = helpers.getMids();
 

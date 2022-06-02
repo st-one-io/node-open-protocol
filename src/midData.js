@@ -1,4 +1,4 @@
-{
+module.exports = /** @type {const} */ ({
     "15": "psetSelected",
     "52": "vin",
     "61": "lastTightening",
@@ -21,4 +21,4 @@
     "401": "automaticManualMode",
     "421": "openProtocolCommandsDisabled",
     "501": "motorTuningResultData"
-}
+});

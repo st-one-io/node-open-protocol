@@ -11,7 +11,7 @@ const OpenProtocolParser = require("./openProtocolParser");
 const OpenProtocolSerializer = require("./openProtocolSerializer");
 const MIDParser = require("./MIDParser");
 const MIDSerializer = require("./MIDSerializer");
-const constants = require("./constants.json");
+const constants = require("./constants");
 
 var debug = util.debuglog('open-protocol');
 

@@ -1,4 +1,4 @@
-{
+module.exports = /** @type {const} */ ({
     "psetSelected": {
         "data": 15,
         "subscribe": 14,
@@ -149,4 +149,4 @@
         "ack": 502,
         "generic": true
     }
-}
+});
