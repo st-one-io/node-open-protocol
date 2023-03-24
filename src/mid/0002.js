@@ -71,6 +71,12 @@ function parser(msg, opts, cb) {
                 processParser(msg, buffer, "sequenceNumberSupport", "number", 1, position, cb) &&
                 processKey(msg, buffer, "linkingHandlingSupport", 13, 2, position, cb) &&
                 processParser(msg, buffer, "linkingHandlingSupport", "number", 1, position, cb) &&
+                processKey(msg, buffer, "stationID", 14, 2, position, cb) &&
+                processParser(msg, buffer, "stationID", "string", 10, position, cb) &&
+                processKey(msg, buffer, "stationName", 15, 2, position, cb) &&
+                processParser(msg, buffer, "stationName", "string", 25, position, cb) &&
+                processKey(msg, buffer, "clientID", 16, 2, position, cb) &&
+                processParser(msg, buffer, "clientID", "number", 1, position, cb) &&
                 cb(null, msg);
             break;
 
