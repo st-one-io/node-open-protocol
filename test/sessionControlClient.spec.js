@@ -831,7 +831,7 @@ describe("Session Control Client", () => {
 
             switch (step) {
                 case 0:
-                    stream.push(Buffer.from("01790002006     0000010000020003PA160LDA2                04ACT052.2                0610.15.6            07                   08Silver (Ag)             09D240003   1000111001121130\u0000"));
+                    stream.push(Buffer.from("02210002006     0000010000020003PA160LDA2                04ACT052.2                0610.15.6            07                   08Silver (Ag)             09D240003   100011100112113014429496729515QASWWEDXCVFR562 DERF34EDF169\u0000"));
                     step += 1;
                     break;
 

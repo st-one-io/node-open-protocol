@@ -176,7 +176,7 @@ describe("MID 0002", () => {
         let msg = {
             mid: 2,
             revision: 6,
-            payload: Buffer.from("010001020103Teste Airbag             04ABC05AAAAAAAAAAAAAAAAAAA06BBBBBBBBBBBBBBBBBBB07CCCCCCCCCCCCCCCCCCC08AS254DFCVFDCVGTREDFGHJKL09123987ASD61000311002120131")
+            payload: Buffer.from("010001020103Teste Airbag             04ABC05AAAAAAAAAAAAAAAAAAA06BBBBBBBBBBBBBBBBBBB07CCCCCCCCCCCCCCCCCCC08AS254DFCVFDCVGTREDFGHJKL09123987ASD6100031100212013114429496729515QASWWEDXCVFR562 DERF34EDF169")
         };
 
         MID.parser(msg, {}, (err, data) => {
@@ -201,7 +201,10 @@ describe("MID 0002", () => {
                     systemType: 3,
                     systemSubtype: 2,
                     sequenceNumberSupport: 0,
-                    linkingHandlingSupport: 1
+                    linkingHandlingSupport: 1,
+                    stationID: 4294967295,
+                    stationName: "QASWWEDXCVFR562 DERF34EDF",
+                    clientID: 9,
                 }
             });
 
@@ -389,7 +392,7 @@ describe("MID 0002", () => {
                 systemSubtype: 2,
                 sequenceNumberSupport: 0,
                 linkingHandlingSupport: 1,
-                stationID: "AESDR56RDT",
+                stationID: 4294967295,
                 stationName: "QASWWEDXCVFR562 DERF34EDF",
                 clientID: 9
             }
@@ -404,7 +407,7 @@ describe("MID 0002", () => {
             expect(data).to.be.deep.equal({
                 mid: 2,
                 revision: 6,
-                payload: Buffer.from("010001020103Teste Airbag             04ABC05AAAAAAAAAAAAAAAAAAA06BBBBBBBBBBBBBBBBBBB07CCCCCCCCCCCCCCCCCCC08AS254DFCVFDCVGTREDFGHJKL09123987ASD6100031100212013114AESDR56RDT15QASWWEDXCVFR562 DERF34EDF169")
+                payload: Buffer.from("010001020103Teste Airbag             04ABC05AAAAAAAAAAAAAAAAAAA06BBBBBBBBBBBBBBBBBBB07CCCCCCCCCCCCCCCCCCC08AS254DFCVFDCVGTREDFGHJKL09123987ASD6100031100212013114429496729515QASWWEDXCVFR562 DERF34EDF169")
             });
 
             done();
