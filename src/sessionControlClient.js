@@ -688,6 +688,13 @@ class SessionControlClient extends EventEmitter {
             return;
         }
 
+        if (midGroupList[midGroup].subscribe === undefined) {
+            let err = new Error(`[Session Control Client] [Subscribe] subscribing to midGroup [${midGroup}] is not supported`);
+            debug("SessionControlClient _subscribe err_unsupported_midGroup");
+            cb(err);
+            return;
+        }
+
         let mid = opts || {};
 
         let type = SUBSCRIBE;
@@ -744,6 +751,13 @@ class SessionControlClient extends EventEmitter {
         if (midGroupList[midGroup] === undefined) {
             let err = new Error(`[Session Control Client] [Unsubscribe] invalid groupMid [${midGroup}]`);
             debug("SessionControlClient _unsubscribe err_invalid_midGroup");
+            cb(err);
+            return;
+        }
+
+        if (midGroupList[midGroup].unsubscribe === undefined) {
+            let err = new Error(`[Session Control Client] [Unsubscribe] unsubscribing from midGroup [${midGroup}] is not supported`);
+            debug("SessionControlClient _unsubscribe err_unsupported_midGroup");
             cb(err);
             return;
         }
