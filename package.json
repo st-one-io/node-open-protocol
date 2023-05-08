@@ -28,7 +28,7 @@
     "cleco",
     "estic"
   ],
-  "author": "SmartTech & AIRBUS",
+  "author": "SmartTech & Alejandro de la Mata",
   "license": "GPL-3.0-or-later",
   "devDependencies": {
     "chai": "^4.2.0",
