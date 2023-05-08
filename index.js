@@ -1,5 +1,6 @@
 //@ts-check
 /*
+  Copyright: (c) 2023, Alejandro de la Mata Chico
   Copyright: (c) 2018-2020, Smart-Tech Controle e Automação
   GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
 */

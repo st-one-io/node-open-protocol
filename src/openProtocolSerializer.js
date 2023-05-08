@@ -1,5 +1,6 @@
 //@ts-check
 /*
+  Copyright: (c) 2023 Alejandro de la Mata Chico
   Copyright: (c) 2018-2020, Smart-Tech Controle e Automação
   GNU General Public License v3.0+ (see LICENSE or https://www.gnu.org/licenses/gpl-3.0.txt)
 */
@@ -68,11 +69,14 @@ class OpenProtocolSerializer extends Transform {
             return;
         }
 
-        if (chunk.stationID === "  " ||chunk.stationID === undefined) {
+        if (chunk.stationID === "  ") {
             chunk.stationID = 1;
+            chunk.spindleID = Number(chunk.stationID);
+        } else if (chunk.stationID === undefined) {
+            chunk.stationID = "\n" + "\n";
+        } else {
+            chunk.stationID = Number(chunk.stationID);
         }
-
-        chunk.stationID = Number(chunk.stationID);
 
         if (isNaN(chunk.stationID) || chunk.stationID < 0 || chunk.stationID > 99) {
             cb(new Error(`Invalid stationID [${chunk.stationID}]`));
@@ -80,11 +84,14 @@ class OpenProtocolSerializer extends Transform {
             return;
         }
 
-        if (chunk.spindleID === "  " ||chunk.spindleID === undefined) {
+        if (chunk.spindleID === "  ") {
             chunk.spindleID = 1;
+            chunk.spindleID = Number(chunk.spindleID);
+        } else if (chunk.spindleID === undefined) {
+            chunk.spindleID = "\n" + "\n";
+        } else {
+            chunk.spindleID = Number(chunk.spindleID);
         }
-
-        chunk.spindleID = Number(chunk.spindleID);
 
         if (isNaN(chunk.spindleID) || chunk.spindleID < 0 || chunk.spindleID > 99) {
             cb(new Error(`Invalid spindleID [${chunk.spindleID}]`));
@@ -104,11 +111,14 @@ class OpenProtocolSerializer extends Transform {
             return;
         }
 
-        if (chunk.messageParts === " " || chunk.messageParts === undefined) {
+        if (chunk.messageParts === " ") {
             chunk.messageParts = 0;
+            chunk.messageParts = Number(chunk.messageParts);
+        } else if (chunk.messageParts === undefined) {
+            chunk.messageParts = "\n";
+        } else {
+            chunk.messageParts = Number(chunk.messageParts);
         }
-
-        chunk.messageParts = Number(chunk.messageParts);
 
         if (isNaN(chunk.messageParts) || chunk.messageParts < 0 || chunk.messageParts > 9) {
             cb(new Error(`Invalid messageParts [${chunk.messageParts}]`));
@@ -116,11 +126,14 @@ class OpenProtocolSerializer extends Transform {
             return;
         }
 
-        if (chunk.messageNumber === " " || chunk.messageNumber === undefined) {
+        if (chunk.messageNumber === " ") {
             chunk.messageNumber = 0;
+            chunk.messageNumber = Number(chunk.messageNumber);
+        } else if (chunk.messageNumber === undefined) {
+            chunk.messageNumber = "\n";
+        } else {
+            chunk.messageNumber = Number(chunk.messageNumber);
         }
-
-        chunk.messageNumber = Number(chunk.messageNumber);
 
         if (isNaN(chunk.messageNumber) || chunk.messageNumber < 0 || chunk.messageNumber > 9) {
             cb(new Error(`Invalid messageNumber [${chunk.messageNumber}]`));
