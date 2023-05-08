@@ -1,7 +1,11 @@
 ## Changelog
 
-#### v1.1.1
+#### v1.1.2
  - Switches to GPL v3 licensing model
+
+
+#### v1.1.1
+ - Implemented parsing of MID 0900
  
 
 #### v1.1.0
