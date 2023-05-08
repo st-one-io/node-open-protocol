@@ -1,6 +1,6 @@
 {
   "name": "node-open-protocol-extended",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A library to interface with Power Tools using the Atlas Copco Open Protocol",
   "main": "index.js",
   "directories": {
