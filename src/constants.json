@@ -260,11 +260,11 @@
     },
     "UNIT": {
         "000": "No unit",
-        "001": "N-m",
+        "001": "N·m",
         "002": "ft lbf",
-        "003": "cN-m",
-        "004": "kN-m",
-        "005": "MN-m",
+        "003": "cN·m",
+        "004": "kN·m",
+        "005": "MN·m",
         "006": "in lbf",
         "007": "Kpm",
         "008": "Kfcnm",
@@ -336,6 +336,14 @@
         "923": "kgf / ms",
         "924": "ozf / ms",
         "925": "MN / ms"
+    },
+    "TRACE_TYPE": {
+        "1": "Angle",
+        "2": "Torque",
+        "3": "Current",
+        "4": "Gradient",
+        "5": "Stroke",
+        "6": "Force"
     },
     "ERROR": {
         "00": "No Error",
