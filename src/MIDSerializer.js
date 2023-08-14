@@ -35,9 +35,9 @@ class MIDSerializer extends Transform {
         debug("MIDSerializer _transform", chunk);
 
         if(mids[chunk.mid]){
-            
+
             mids[chunk.mid].serializer(chunk, null, (err, data) => {
-                
+
                 if(err){
                     cb(new Error(`Error on serializer [${err}]`));
                     debug('MIDSerializer _transform err-serializer', chunk, err);
@@ -45,9 +45,9 @@ class MIDSerializer extends Transform {
                 }
 
                 this.push(data);
-                cb();                
+                cb();
             });
-            
+
         }else{
 
             if(chunk.payload === undefined){

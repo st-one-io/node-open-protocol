@@ -97,7 +97,7 @@
     },
     "resetDigitalInputFunction": {
         "request": 225
-    },    
+    },
     "userDataDownload": {
         "request": 240,
         "reply": 242
